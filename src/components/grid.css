@@ -23,9 +23,9 @@ body {
     justify-content: center;
     background-color: #282c34;
     height: 80vh;
-    width: 95vw;
+    width: 93vw;
     padding: 20px;
-    overflow: scroll;
+    overflow: auto;
 }
 
 .board-row {

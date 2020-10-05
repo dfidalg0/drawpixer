@@ -2,6 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './grid.css';
 
+window.mouseDown = false;
+document.onmousedown = function () {
+    window.mouseDown = true;
+}
+document.onmouseup = function () {
+    window.mouseDown = false;
+}
+
 class Square extends React.Component {
     constructor(props) {
         super(props);
@@ -11,7 +19,9 @@ class Square extends React.Component {
     }
     render() {
         return (
-            <button className="square" style={{ backgroundColor: this.state.value }} onClick={() => this.setState({ value: this.props.color })}
+            <button className="square" style={{ backgroundColor: this.state.value }}
+                onMouseOver={() => { if (window.mouseDown) { this.setState({ value: this.props.color }) } }}
+                onMouseDown={() => this.setState({ value: this.props.color })}
             >
             </button>
         );
