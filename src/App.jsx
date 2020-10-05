@@ -2,6 +2,7 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import ColorPicker from './components/colorpicker';
+import Editor from './components/gridpixels'
 import { useState, useEffect } from 'react';
 
 function App() {
@@ -26,10 +27,12 @@ function App() {
             onContextMenu={showPicker}
             onClick={() => setPickerPos(null)}
         >
-            <header className="App-header">
+            <header className="header">
                 <ColorPicker callback={setColor} pos={pickerPos}/>
-                <img src={logo} className="App-logo" alt="logo" />
             </header>
+            <body>
+                <Editor color={color}/>
+            </body>
         </div>
     );
 }
