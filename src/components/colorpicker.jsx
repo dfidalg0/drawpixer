@@ -1,18 +1,28 @@
 import React from 'react';
-import { ChromePicker as Picker } from 'react-color';
+import { SketchPicker as Picker } from 'react-color';
 import { useState } from 'react';
 
 const WIDTH = 200;
-const HEIGHT = 9/16 * WIDTH + 107;
+const HEIGHT = 9/16 * WIDTH + 192;
 
 export default function ColorPicker({ pos, callback }) {
     const [color, setColor] = useState('#000000');
+    const [preset, setPreset] = useState([
+        '#D0021B', '#F5A623', '#F8E71C', '#8B572A', '#7ED321',
+        '#417505', '#BD10E0', '#9013FE', '#4A90E2', '#50E3C2',
+        '#B8E986', '#000000', '#4A4A4A', '#9B9B9B', '#FFFFFF'
+    ]);
+
+    function colorChangeComplete(color) {
+        callback(color.hex);
+        setPreset([color.hex, ...preset.slice(0, -1)]);
+    }
 
     if (pos){
         const maxX = window.innerWidth;
         const maxY = window.innerHeight;
         if (pos.x + WIDTH > maxX){
-            pos.x -= WIDTH - (maxX - pos.x) + 5;
+            pos.x -= WIDTH - (maxX - pos.x) + 25;
         }
         if (pos.y + HEIGHT > maxY) {
             pos.y -= HEIGHT - (maxY - pos.y) + 5;
@@ -34,7 +44,8 @@ export default function ColorPicker({ pos, callback }) {
                 color={color}
                 disableAlpha={true}
                 onChange={color => setColor(color.hex)}
-                onChangeComplete={color => callback(color.hex)}
+                onChangeComplete={colorChangeComplete}
+                presetColors={preset}
                 styles={{
                     default: {
                         saturation: {
@@ -43,12 +54,11 @@ export default function ColorPicker({ pos, callback }) {
                         toggles: {
                             cursor: 'pointer'
                         },
-                        body: {
-                            cursor: 'default',
-                            backgroundColor: '#262B35',
+                        picker: {
+                            backgroundColor: '#ffffff',
                         },
-                        swatch: {
-                            border: '1px solid white'
+                        controls: {
+                            cursor: 'col-resize'
                         }
                     }
                 }}
