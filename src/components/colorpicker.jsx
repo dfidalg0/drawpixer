@@ -35,6 +35,23 @@ export default function ColorPicker({ pos, callback }) {
                 disableAlpha={true}
                 onChange={color => setColor(color.hex)}
                 onChangeComplete={color => callback(color.hex)}
+                styles={{
+                    default: {
+                        saturation: {
+                            cursor: 'crosshair'
+                        },
+                        toggles: {
+                            cursor: 'pointer'
+                        },
+                        body: {
+                            cursor: 'default',
+                            backgroundColor: '#262B35',
+                        },
+                        swatch: {
+                            border: '1px solid white'
+                        }
+                    }
+                }}
             />
         </div> : null;
 }
