@@ -1,102 +1,54 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import './grid.css';
-
-window.mouseDown = false;
-document.onmousedown = function () {
-    window.mouseDown = true;
-}
-document.onmouseup = function () {
-    window.mouseDown = false;
-}
-
-class Square extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            value: 'white',
-        };
-    }
-    render() {
-        return (
-            <button className="square" style={{ backgroundColor: this.state.value }}
-                onMouseOver={() => { if (window.mouseDown) { this.setState({ value: this.props.color }) } }}
-                onMouseDown={() => this.setState({ value: this.props.color })}
-            >
-            </button>
-        );
-    }
-}
+import classes from '../styles/grid.module.css';
+import EditorSize from './editor-size';
+import Matrix from './matrix';
 
 export default class Editor extends React.Component {
     constructor(props) {
         super(props);
-        this.sizeX = 5;
-        this.sizeY = 5;
+        this.state = {
+            size: [5, 5]
+        }
     }
 
     editorSizeFormChangeHandler = (event) => {
-        let nam = event.target.name;
-        let val = event.target.value;
-        if (nam === "X") {
-            this.sizeX = val;
-        } else {
-            this.sizeY = val;
-        }
+        let { name, value } = event.target;
+
+        value = Number(value);
+
+        if (value <= 0 || value > 50) return;
+
+        this.setState(state => {
+            const { size } = state;
+
+            if (name === 'X')
+                return { size: [value, size[1]] };
+            else return { size: [size[0], value] }
+        });
     }
 
-    editorSizeFormHandleSubmit = (event) => {
+    cleanGrid = (event) => {
         event.preventDefault();
         this.forceUpdate();
-    }
-
-    renderEditorSize() {
-        return (
-            <form>
-                <label>
-                    Dimensão X:         </label>
-                <input type="number" name="X" onChange={this.editorSizeFormChangeHandler} />
-                <br />
-                <label>
-                    Dimensão Y:         </label>
-                <input type="number" name="Y" onChange={this.editorSizeFormChangeHandler} />
-
-                <br />
-                <button onClick={this.editorSizeFormHandleSubmit}>Alterar</button>
-            </form>
-        );
-    }
-
-    renderSquare(i) {
-        return <Square value={i} color={this.props.color} />;
-    }
-
-    renderMatrix() {
-        let matrix = []
-        let row = []
-        for (let x = 0; x < this.sizeY; x++) {
-            row = []
-            for (let y = 0; y < this.sizeX; y++) {
-                row.push(this.renderSquare(x + y + 1))
-            }
-
-            matrix.push(<div className="board-row">{row}</div>)
-        }
-
-        return matrix
+        alert('Não implementado!');
     }
 
     render() {
         return (
-            <div>
-                <div className="editorSize">
-                    {this.renderEditorSize()}
-                </div>
-                <br />
-                <div className="outerEditorGrid">
-                    <div className="editorGrid" align="center">
-                        {this.renderMatrix()}
+            <div className={classes.outerEditorGrid}>
+                <div className={classes.editorGrid} align="center">
+                    <div className={classes.editorSize}>
+                        <EditorSize
+                            size={this.state.size}
+                            onChange={this.editorSizeFormChangeHandler}
+                            clean={this.cleanGrid}
+                        />
                     </div>
+
+                    <Matrix
+                        size={this.state.size}
+                        color={this.props.color}
+                    />
                 </div>
             </div>
         );

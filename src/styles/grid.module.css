@@ -1,0 +1,30 @@
+.square {
+    background: #fff;
+    border: 1px solid #999;
+}
+
+.square:focus {
+    outline: none;
+}
+
+.editorGrid {
+    justify-content: center;
+    background-color: #282c34;
+    padding: 20px;
+}
+
+.boardRow {
+    justify-content: center;
+    display: flex;
+}
+
+.editorSize {
+    position: fixed;
+    text-align: left;
+}
+
+.outerEditorGrid {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
