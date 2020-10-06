@@ -7,7 +7,8 @@ const useStyles = makeStyles(theme => ({
     button: {
         display: 'flex',
         width: '100%',
-        backgroundColor: '#073D3D'
+        backgroundColor: '#073D3D',
+        marginTop: 15
     }
 }));
 
