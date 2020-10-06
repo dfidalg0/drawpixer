@@ -19,7 +19,7 @@ export default function Square ({ color, size }) {
     height = width = size ? size : 34;
 
     return (
-        <button className={classes.square} style={{
+        <button id = "square" className={classes.square} style={{
             backgroundColor: value, height, width
         }}
             onMouseOver={(e) => {
