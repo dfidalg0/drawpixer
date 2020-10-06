@@ -21,16 +21,19 @@ export default function SaveImage({ size }) {
             var dimentions = document.getElementById("editorGridMatrix").getBoundingClientRect();
             var dimSquare = document.getElementById("square").getBoundingClientRect().width;
 
-            var newImageX = Math.floor((dimentions.width - size[0]*dimSquare)/2);
+            var newImageX = (parseFloat(dimentions.width) - parseFloat(size[0])*(parseFloat(dimSquare) - 1.0))/2.0;
+            var newWidth = parseFloat(size[0])*(parseFloat(dimSquare) - 1.0);
+            var newHeight = parseFloat(size[1])*(parseFloat(dimSquare) - 1.0);
+            alert(newWidth + " " + newHeight);
             var ctx = canvas.getContext('2d');
-            var imageData = ctx.getImageData(newImageX, 0, Math.ceil(size[0]*dimSquare), Math.ceil(size[1]*dimSquare));
+            var imageData = ctx.getImageData(newImageX, 0, newWidth, newHeight);
 
             var newCan = document.createElement('canvas');
-            newCan.width = Math.ceil(size[0]*dimSquare);
-            newCan.height = Math.ceil(size[1]*dimSquare);
+            newCan.width = newWidth;
+            newCan.height = newHeight;
             var newCtx = newCan.getContext('2d');
             newCtx.putImageData(imageData, 0, 0);
-
+                    
             var imgURL = newCan.toDataURL("image/png");
 
             var link = document.createElement('a');
