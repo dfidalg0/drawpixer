@@ -24,7 +24,6 @@ export default function SaveImage({ size }) {
             var newImageX = (parseFloat(dimentions.width) - parseFloat(size[0])*(parseFloat(dimSquare) - 1.0))/2.0;
             var newWidth = parseFloat(size[0])*(parseFloat(dimSquare) - 1.0);
             var newHeight = parseFloat(size[1])*(parseFloat(dimSquare) - 1.0);
-            alert(newWidth + " " + newHeight);
             var ctx = canvas.getContext('2d');
             var imageData = ctx.getImageData(newImageX, 0, newWidth, newHeight);
 
