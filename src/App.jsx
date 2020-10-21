@@ -1,8 +1,9 @@
 import React from 'react';
-import './App.css';
 import ColorPicker from './components/colorpicker';
 import Editor from './components/gridpixels'
+import Mural from './components/mural';
 import { useState } from 'react';
+import './App.css';
 
 function App() {
     const [color, setColor] = useState('#000000'); // Inicial - Preto
@@ -43,6 +44,25 @@ function App() {
                 preset={preset}
             />
             <Editor color={color} />
+            <Mural cards={[{
+                author: 'Vinícius Brito',
+                img: require('./assets/sample1.png'),
+                sub: 'Shadowed tree',
+                desc: 'A pretty mug filled with still-hot coffe. Want some?',
+                date: new Date('2020-08-10 09:30')
+            }, {
+                author: 'Vinícius Brito',
+                img: require('./assets/sample2.png'),
+                sub: 'Coffe mug',
+                desc: 'A pretty mug filled with still-hot coffe. Want some?',
+                date: new Date('2020-10-15 21:15')
+            }, {
+                author: 'Diego Fidalgo',
+                img: require('./assets/sample3.jpeg'),
+                sub: 'ITA logo',
+                desc: 'A pretty mug filled with still-hot coffe. Want some?',
+                date: new Date('2020-10-21 19:37')
+            }]} />
         </div>
     );
 }

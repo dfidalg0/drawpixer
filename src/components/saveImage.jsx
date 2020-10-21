@@ -26,6 +26,8 @@ export default function SaveImage({ size }) {
             var newWidth = parseFloat(size[0])*(parseFloat(dimSquare) - 1.0);
             var newHeight = parseFloat(size[1])*(parseFloat(dimSquare) - 1.0);
             var ctx = canvas.getContext('2d');
+            // // Linha seguinte não salva o progresso do desenho
+            // localStorage.setItem("currimage", document.getElementById("editorGridMatrix"));
             var imageData = ctx.getImageData(newImageX, 0, newWidth, newHeight);
 
             var newCan = document.createElement('canvas');
@@ -33,7 +35,7 @@ export default function SaveImage({ size }) {
             newCan.height = newHeight;
             var newCtx = newCan.getContext('2d');
             newCtx.putImageData(imageData, 0, 0);
-                    
+
             var imgURL = newCan.toDataURL("image/png");
 
             var link = document.createElement('a');
@@ -46,6 +48,10 @@ export default function SaveImage({ size }) {
         });
     }
 
+    // function LoadImage(){
+    //     document.getElementById("editorGridMatrix").innerHTML = localStorage.getItem("currimage");
+    // }
+
     return (
         <form className={classes.saveImg}>
             <Button
@@ -55,6 +61,13 @@ export default function SaveImage({ size }) {
             >
                 Salvar Imagem
             </Button>
+            {/* <Button
+                variant="contained" color="primary"
+                onClick={LoadImage} size="large"
+                className={classes.button}
+            >
+                Carregar Imagem Salva
+            </Button> */}
         </form>
     );
 }
