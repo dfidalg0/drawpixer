@@ -11,3 +11,16 @@ body {
     width: 100vw;
     height: 100vh;
 }
+
+.block{
+    display: block;
+    position: absolute;
+    top: 200px;
+    left: 30%;
+    width: 100vw;
+}
+
+.sample{
+    margin-left: 40px;
+    margin-right: 40px;
+}
