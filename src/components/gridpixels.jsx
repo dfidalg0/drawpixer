@@ -3,12 +3,17 @@ import classes from '../styles/grid.module.css';
 import EditorSize from './editor-size';
 import Matrix from './matrix';
 import SaveImage from './saveImage'
+import BackButton from './backButton'
 
 export default class Editor extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            size: [5, 5]
+            size: [5, 5],
+            clicks: {
+                button: [],
+                color: []
+            }
         }
     }
 
@@ -44,12 +49,14 @@ export default class Editor extends React.Component {
                             onChange={this.editorSizeFormChangeHandler}
                             clean={this.cleanGrid}
                         />
-                        <SaveImage size={this.state.size}/>
+                        <SaveImage size={this.state.size} />
+                        <BackButton clicks = {this.state.clicks} />
                     </div>
 
                     <div id="editorGridMatrix">
                         <Matrix
                             size={this.state.size}
+                            clicks={this.state.clicks}
                             color={this.props.color}
                         />
                     </div>

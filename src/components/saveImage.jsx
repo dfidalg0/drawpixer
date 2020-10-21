@@ -1,5 +1,6 @@
 import React from 'react';
 import html2canvas from 'html2canvas';
+
 import { Button, makeStyles } from '@material-ui/core';
 
 
@@ -19,7 +20,7 @@ export default function SaveImage({ size }) {
     function htmlToPng() {
         html2canvas(document.querySelector("#editorGridMatrix")).then(canvas => {
             var dimentions = document.getElementById("editorGridMatrix").getBoundingClientRect();
-            var dimSquare = document.getElementById("square").getBoundingClientRect().width;
+            var dimSquare = document.getElementById('1').getBoundingClientRect().width;
 
             var newImageX = (parseFloat(dimentions.width) - parseFloat(size[0])*(parseFloat(dimSquare) - 1.0))/2.0;
             var newWidth = parseFloat(size[0])*(parseFloat(dimSquare) - 1.0);
