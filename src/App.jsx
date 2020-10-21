@@ -48,7 +48,7 @@ function App() {
                 author: 'Vinícius Brito',
                 img: require('./assets/sample1.png'),
                 sub: 'Shadowed tree',
-                desc: 'A pretty mug filled with still-hot coffe. Want some?',
+                desc: 'A simple landscape. An apple tree, a river and a little accurate shadow.',
                 date: new Date('2020-08-10 09:30')
             }, {
                 author: 'Vinícius Brito',
@@ -60,7 +60,7 @@ function App() {
                 author: 'Diego Fidalgo',
                 img: require('./assets/sample3.jpeg'),
                 sub: 'ITA logo',
-                desc: 'A pretty mug filled with still-hot coffe. Want some?',
+                desc: 'Never heard of it? Then get to know brazilian version of MIT.',
                 date: new Date('2020-10-21 19:37')
             }]} />
         </div>

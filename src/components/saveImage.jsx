@@ -13,6 +13,9 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
+var x = 0;
+var y = 0;
+
 export default function SaveImage({ size }) {
 
     const classes = useStyles();
@@ -26,8 +29,13 @@ export default function SaveImage({ size }) {
             var newWidth = parseFloat(size[0])*(parseFloat(dimSquare) - 1.0);
             var newHeight = parseFloat(size[1])*(parseFloat(dimSquare) - 1.0);
             var ctx = canvas.getContext('2d');
-            // // Linha seguinte não salva o progresso do desenho
-            // localStorage.setItem("currimage", document.getElementById("editorGridMatrix"));
+            x = size[0];
+            y = size[1];
+            var colors = [];
+            for(var id = 1; id <= x*y; id++){
+                colors.push(document.getElementById(id).style.backgroundColor);
+            }
+            localStorage.setItem("currimage", colors);
             var imageData = ctx.getImageData(newImageX, 0, newWidth, newHeight);
 
             var newCan = document.createElement('canvas');
@@ -48,9 +56,18 @@ export default function SaveImage({ size }) {
         });
     }
 
-    // function LoadImage(){
-    //     document.getElementById("editorGridMatrix").innerHTML = localStorage.getItem("currimage");
-    // }
+    function LoadImage(){
+        var img = localStorage.getItem("currimage");
+        var obj = JSON.parse(img) || {};
+        if(typeof obj.date == "undefined") alert("Não há imagem salva!");
+        else{
+            document.write("Blabla");
+            for(var id = 1; id <= x*y; id++){
+                document.getElementById(id).style.backgroundColor = img[id-1];
+            }
+            localStorage.removeItem("currimage");
+        }
+    }
 
     return (
         <form className={classes.saveImg}>
@@ -61,13 +78,13 @@ export default function SaveImage({ size }) {
             >
                 Salvar Imagem
             </Button>
-            {/* <Button
+            <Button
                 variant="contained" color="primary"
                 onClick={LoadImage} size="large"
                 className={classes.button}
             >
                 Carregar Imagem Salva
-            </Button> */}
+            </Button>
         </form>
     );
 }
