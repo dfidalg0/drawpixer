@@ -13,8 +13,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-var x = 0;
-var y = 0;
+var pressed = false;
 
 export default function SaveImage({ size }) {
 
@@ -25,17 +24,10 @@ export default function SaveImage({ size }) {
             var dimentions = document.getElementById("editorGridMatrix").getBoundingClientRect();
             var dimSquare = document.getElementById('1').getBoundingClientRect().width;
 
-            var newImageX = (parseFloat(dimentions.width) - parseFloat(size[0])*(parseFloat(dimSquare) - 1.0))/2.0;
-            var newWidth = parseFloat(size[0])*(parseFloat(dimSquare) - 1.0);
-            var newHeight = parseFloat(size[1])*(parseFloat(dimSquare) - 1.0);
+            var newImageX = (parseFloat(dimentions.width) - parseFloat(size[0]) * (parseFloat(dimSquare) - 1.0)) / 2.0;
+            var newWidth = parseFloat(size[0]) * (parseFloat(dimSquare) - 1.0);
+            var newHeight = parseFloat(size[1]) * (parseFloat(dimSquare) - 1.0);
             var ctx = canvas.getContext('2d');
-            x = size[0];
-            y = size[1];
-            var colors = [];
-            for(var id = 1; id <= x*y; id++){
-                colors.push(document.getElementById(id).style.backgroundColor);
-            }
-            localStorage.setItem("currimage", colors);
             var imageData = ctx.getImageData(newImageX, 0, newWidth, newHeight);
 
             var newCan = document.createElement('canvas');
@@ -53,19 +45,36 @@ export default function SaveImage({ size }) {
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+
+            // save grid to local storage
+            var colorsGrid = [];
+            for (var id = 1; id <= size[0] * size[1]; id++) {
+                colorsGrid.push(document.getElementById(id).style.backgroundColor);
+            }
+            var grid = {
+                x: size[0],
+                y: size[1],
+                colors: colorsGrid
+            }
+
+            window.localStorage.setItem("currimage", JSON.stringify(grid));
         });
     }
 
-    function LoadImage(){
-        var img = localStorage.getItem("currimage");
-        var obj = JSON.parse(img) || {};
-        if(typeof obj.date == "undefined") alert("Não há imagem salva!");
-        else{
-            document.write("Blabla");
-            for(var id = 1; id <= x*y; id++){
-                document.getElementById(id).style.backgroundColor = img[id-1];
+    function LoadImage() {
+        var item = window.localStorage.getItem("currimage");
+        if (item === 'undefined') alert("Não há imagem salva!");
+        else {
+            var img = JSON.parse(item);
+            if (!pressed) {
+                size[0] = img.x;
+                size[1] = img.y;
+            } else {
+                for (var id = 1; id <= size[0] * size[1]; id++) {
+                    document.getElementById(id).style.backgroundColor = img.colors[id - 1];
+                }
             }
-            localStorage.removeItem("currimage");
+            pressed = !pressed;
         }
     }
 
