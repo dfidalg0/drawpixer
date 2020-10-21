@@ -1,12 +1,9 @@
 import React from 'react';
-import './App.css';
 import ColorPicker from './components/colorpicker';
 import Editor from './components/gridpixels'
-import Mural from './components/mural'
-import sample1 from './images/sample1.png'
-import sample2 from './images/sample2.png'
-import sample3 from './images/sample3.jpeg'
+import Mural from './components/mural';
 import { useState } from 'react';
+import './App.css';
 
 function App() {
     const [color, setColor] = useState('#000000'); // Inicial - Preto
@@ -47,25 +44,25 @@ function App() {
                 preset={preset}
             />
             <Editor color={color} />
-            <div class="block">
-                <p align="center">Sugerido para você.</p>
-                //Bug: cards separados na vertical, não na horizontal.
-                <div class="sample"><Mural
-                    img = {sample2}
-                    sub = {"Coffe mug"}
-                    desc = {"A pretty mug filled with still-hot coffe. Want some?"}
-                /></div>
-                <div class="sample"><Mural
-                    img = {sample1}
-                    sub = {"Shadowed tree"}
-                    desc = {"A simple landscape.\nAn apple tree, a river and a little accurate shadow."}
-                /></div>
-                <div class="sample"><Mural
-                    img = {sample3}
-                    sub = {"ITA logo"}
-                    desc = {"Never heard of it? Then get to know brazilian version of MIT."}
-                /></div>
-            </div>
+            <Mural cards={[{
+                author: 'Vinícius Brito',
+                img: require('./assets/sample1.png'),
+                sub: 'Shadowed tree',
+                desc: 'A pretty mug filled with still-hot coffe. Want some?',
+                date: new Date('2020-08-10 09:30')
+            }, {
+                author: 'Vinícius Brito',
+                img: require('./assets/sample2.png'),
+                sub: 'Coffe mug',
+                desc: 'A pretty mug filled with still-hot coffe. Want some?',
+                date: new Date('2020-10-15 21:15')
+            }, {
+                author: 'Diego Fidalgo',
+                img: require('./assets/sample3.jpeg'),
+                sub: 'ITA logo',
+                desc: 'A pretty mug filled with still-hot coffe. Want some?',
+                date: new Date('2020-10-21 19:37')
+            }]} />
         </div>
     );
 }
