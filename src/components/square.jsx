@@ -21,12 +21,17 @@ export default function Square({ color, size, clicks, squareId }) {
         }}
             onMouseOver={(e) => {
                 if (window.mouseDown) {
-                    changeColor(color, e, clicks, squareId);
+                    if (window.button === 2)
+                        changeColor('#ffffff', e, clicks, squareId);
+                    else
+                        changeColor(color, e, clicks, squareId);
                 }
             }}
             onMouseDown={(e) => {
                 if (e.button === 0) {
                     changeColor(color, e, clicks, squareId);
+                } else if (e.button === 2) {
+                    changeColor('#ffffff', e, clicks, squareId);
                 }
             }}
             onContextMenu={event => {
