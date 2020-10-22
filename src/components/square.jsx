@@ -10,7 +10,18 @@ document.onmouseup = function () {
     window.mouseDown = false;
 }
 
-export default function Square({ color, size, clicks, squareId }) {
+export default function Square({ color, size, clicks, setClicks, squareId }) {
+    function changeColor(color, e, clicks, squareId) {
+        let lastColor = rgb2hex(e.target.style.backgroundColor);
+        if (color !== lastColor) {
+            setClicks({
+                button: [...clicks.button, squareId],
+                color: [...clicks.color, lastColor]
+            });
+            e.target.style.backgroundColor = color;
+        }
+    }
+
     let width, height;
 
     height = width = size ? size : 34;
@@ -41,15 +52,6 @@ export default function Square({ color, size, clicks, squareId }) {
         >
         </button >
     );
-}
-
-function changeColor(color, e, clicks, squareId) {
-    let lastColor = rgb2hex(e.target.style.backgroundColor);
-    if (color !== lastColor) {
-        clicks.button.push(squareId);
-        clicks.color.push(lastColor);
-        e.target.style.backgroundColor = color;
-    }
 }
 
 function rgb2hex(rgb) {

@@ -73,6 +73,7 @@ export default class Editor extends React.Component {
                             size={this.state.size}
                             clicks={this.state.clicks}
                             color={this.props.color}
+                            setClicks={clicks => this.setState({ clicks })}
                         />
                     </div>
 

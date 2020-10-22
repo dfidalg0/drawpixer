@@ -4,7 +4,7 @@ import classes from '../styles/grid.module.css';
 
 const maxSize = Math.min(window.innerHeight, window.innerWidth);
 
-export default function Matrix({ size, color, clicks }) {
+export default function Matrix({ size, color, clicks, setClicks }) {
     let matrix = [];
     let row = [];
     let squareSize;
@@ -25,6 +25,7 @@ export default function Matrix({ size, color, clicks }) {
                     squareId={x*size[0] + y + 1}
                     color={color} size={squareSize}
                     clicks={clicks}
+                    setClicks={setClicks}
                 />
             );
         }
