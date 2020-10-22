@@ -17,12 +17,12 @@ export default function Matrix({ size, color, clicks }) {
     for (let x = 0; x < size[1]; x++) {
         row = [];
         for (let y = 0; y < size[0]; y++) {
-            const id = x * size[0] + y + 1;
+            const id = x + y + 1;
 
             row.push(
                 <Square
-                    key={`square-${id}`} value={x + y + 1}
-                    squareId={id}
+                    key={id} value={x + y + 1}
+                    squareId={x*size[0] + y + 1}
                     color={color} size={squareSize}
                     clicks={clicks}
                 />
