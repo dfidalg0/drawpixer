@@ -13,9 +13,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-var pressed = false;
-
-export default function SaveImage({ size }) {
+export default function SaveImage({ size, setSize }) {
 
     const classes = useStyles();
 
@@ -63,18 +61,13 @@ export default function SaveImage({ size }) {
 
     function LoadImage() {
         var item = window.localStorage.getItem("currimage");
-        if (item === 'undefined') alert("Não há imagem salva!");
+        if (!item) alert("Não há imagem salva!");
         else {
             var img = JSON.parse(item);
-            if (!pressed) {
-                size[0] = img.x;
-                size[1] = img.y;
-            } else {
-                for (var id = 1; id <= size[0] * size[1]; id++) {
-                    document.getElementById(id).style.backgroundColor = img.colors[id - 1];
-                }
+            setSize([img.x, img.y]);
+            for (var id = 1; id <= size[0] * size[1]; id++) {
+                document.getElementById(id).style.backgroundColor = img.colors[id - 1];
             }
-            pressed = !pressed;
         }
     }
 

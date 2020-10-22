@@ -49,8 +49,15 @@ export default class Editor extends React.Component {
                             onChange={this.editorSizeFormChangeHandler}
                             clean={this.cleanGrid}
                         />
-                        <SaveImage size={this.state.size} />
-                        <BackButton clicks = {this.state.clicks} />
+                        <SaveImage size={this.state.size}
+                            setSize={size => {
+                                this.setState({ size, clicks: {
+                                    button: [],
+                                    color: []
+                                } });
+                            }}
+                        />
+                        <BackButton clicks={this.state.clicks} />
                     </div>
 
                     <div id="editorGridMatrix">
