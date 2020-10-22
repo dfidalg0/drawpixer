@@ -51,7 +51,7 @@ function App() {
                 desc: 'A simple landscape. An apple tree, a river and a little accurate shadow.',
                 date: new Date('2020-08-10 09:30')
             }, {
-                author: 'Vinícius Brito',
+                author: 'Ana Paula Schuch',
                 img: require('./assets/sample2.png'),
                 sub: 'Coffe mug',
                 desc: 'A pretty mug filled with still-hot coffe. Want some?',

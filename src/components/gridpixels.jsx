@@ -9,7 +9,7 @@ export default class Editor extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            size: [5, 5],
+            size: [10, 10],
             clicks: {
                 button: [],
                 color: []
@@ -35,8 +35,16 @@ export default class Editor extends React.Component {
 
     cleanGrid = (event) => {
         event.preventDefault();
-        this.forceUpdate();
-        alert('Não implementado!');
+        const { size } = this.state;
+        for(let id = 1; id <= size[0] * size[1]; ++id){
+            document.getElementById(id).style.backgroundColor = '#ffffff';
+        }
+        this.setState({
+            clicks: {
+                button: [],
+                color: []
+            }
+        })
     }
 
     render() {

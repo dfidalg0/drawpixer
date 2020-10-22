@@ -26,6 +26,7 @@ export default function BackButton({ clicks }) {
     return (
         <form className={classes.backButton}>
             <Button
+                disabled={!clicks.button.length}
                 variant="contained" color="primary"
                 onClick={backLastClick} size="large"
                 className={classes.button}

@@ -65,9 +65,11 @@ export default function SaveImage({ size, setSize }) {
         else {
             var img = JSON.parse(item);
             setSize([img.x, img.y]);
-            for (var id = 1; id <= size[0] * size[1]; id++) {
-                document.getElementById(id).style.backgroundColor = img.colors[id - 1];
-            }
+            setTimeout(() => {
+                for (var id = 1; id <= img.x * img.y; id++) {
+                    document.getElementById(id).style.backgroundColor = img.colors[id - 1];
+                }
+            }, 500);
         }
     }
 
