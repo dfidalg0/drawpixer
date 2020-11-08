@@ -61,8 +61,10 @@ routes.post('/login', async (req, res) => {
             await db.collection('tokens').insertOne({
                 key: refreshToken, sub: user._id,
                 created_at: new Date()
-            });
+            }, { session });
         });
+
+        session.endSession();
 
         return sendTokens(res, accessToken, refreshToken);
     }
