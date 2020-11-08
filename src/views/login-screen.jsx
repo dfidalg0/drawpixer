@@ -75,6 +75,7 @@ function GoogleButton ({ login }){
                             clientId="700716339246-aau8p35vfa84d5lgrf20g6nm196db0aa.apps.googleusercontent.com"
                             buttonText="Continuar com Google"
                             onSuccess={login}
+                            onFailure={console.error}
                         />
                     </Grid>
                 </CardActions>
