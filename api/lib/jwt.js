@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { randomBytes } from 'crypto';
+import { promisify } from 'util';
 
 const secret = process.env.JWT_SECRET;
 
@@ -27,8 +28,10 @@ export function verify(token){
     });
 }
 
-export function genRefreshToken(){
-    return randomBytes(432).toString('base64')
-        .replace(/\+/g, '-')
-        .replace(/\//g, '_');
+export async function genRefreshToken(){
+    return promisify(randomBytes)(432)
+        .then(buffer => buffer.toString('base64')
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_')
+        );
 }

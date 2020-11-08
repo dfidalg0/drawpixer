@@ -51,11 +51,12 @@ routes.post('/login', async (req, res) => {
 
             user = result.value;
 
-            refreshToken = jwt.genRefreshToken();
-
-            accessToken = await jwt.sign(
-                user._id.toString(), pick(user, ['name', 'email'])
-            );
+            [refreshToken, accessToken] = await Promise.all([
+                jwt.genRefreshToken(),
+                jwt.sign(
+                    user._id.toString(), pick(user, ['name', 'email'])
+                )
+            ]);
 
             await db.collection('tokens').insertOne({
                 key: refreshToken, sub: user._id,
@@ -83,7 +84,7 @@ routes.post('/jwt/refresh', async (req, res) => {
 
         const { jid: key } = req.cookies;
 
-        const refreshToken = jwt.genRefreshToken();
+        const refreshToken = await jwt.genRefreshToken();
 
         const update = await db.collection('tokens').updateOne({
             sub: new ObjectID(sub), key
@@ -174,7 +175,7 @@ routes.post('/jwt/destroy', async (req, res) => {
 
     if (key){
         try {
-            const { sub } = jwt.verify(token);
+            const { sub } = await jwt.verify(token);
 
             const db = await mongo.getDb();
             const deletion = await db.collection('tokens').deleteOne({

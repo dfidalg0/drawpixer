@@ -46,10 +46,10 @@ const refresh = (timeout) => async (dispatch, getState) => {
     }, timeout * 1000);
 };
 
-const loadUser = () => async (dispatch, getState) => {
-    const { auth: { token } } = getState();
-
+const loadUser = token => async dispatch => {
     if (token){
+        dispatch(setToken(token));
+
         const { exp, iat, ...user } = jwt.decode(token);
         dispatch(setUser(user));
 
@@ -62,25 +62,30 @@ export const login = googleUser => async dispatch => {
     const { id_token: idToken } = googleUser.getAuthResponse();
 
     try {
+        dispatch(setLoading(true));
+
         const { data: { token } } = await axios.post('/api/login', { idToken });
 
-        dispatch(setToken(token));
-        dispatch(loadUser());
+        dispatch(loadUser(token));
     }
     catch({ response: { data } }){
         alert(data.message);
+    }
+    finally {
+        dispatch(setLoading(false));
     }
 };
 
 export const checkLogin = () => async dispatch => {
     try {
+        dispatch(setLoading(true));
+
         const { data } = await axios.post('/api/jwt/create');
 
         const { token } = data;
 
         if (token) {
-            dispatch(setToken(token));
-            dispatch(loadUser());
+            dispatch(loadUser(token));
         }
     }
     catch (err) {
@@ -96,11 +101,16 @@ export const logout = () => async (dispatch, getState) => {
     const { auth: { token } } = getState();
 
     try {
+        dispatch(setLoading(true));
+
         await axios.post('/api/jwt/destroy', { token });
 
         dispatch(setToken(null));
     }
     catch({ response: { data } }) {
         alert(data.message);
+    }
+    finally {
+        dispatch(setLoading(false));
     }
 };
