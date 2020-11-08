@@ -13,12 +13,20 @@ import { login } from '../store/actions/auth';
 import { connect } from 'react-redux';
 
 const useStyles = makeStyles(theme => ({
+    root: {
+        width: '100vw',
+        height: '100vh'
+    },
     card: {
         width: '100%',
+        maxHeight: '90vh',
         backgroundColor: '#5bced5'
     },
     media:{
-        width: '100%'
+        width: '100%',
+        '@media screen and (max-height: 470px)': {
+            display: 'none'
+        }
     },
     buttonContainer: {
         height: '90pt'
@@ -35,9 +43,9 @@ function GoogleButton ({ login }){
     const classes = useStyles();
 
     return <Grid
-        style={{ width: '100vw', height: '100vh' }}
+        className={classes.root}
         container
-        alignContent="center"
+        alignItems="center"
         justify="center"
     >
         <Grid item xs={9} md={4}>
