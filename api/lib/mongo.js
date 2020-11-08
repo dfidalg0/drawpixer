@@ -1,8 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import { MongoClient, Db } from 'mongodb';
 
-const url = process.env.MONGO_URL;
-
 let cachedClient = null;
 
 /**
@@ -30,12 +28,12 @@ async function getClient(){
         return cachedClient;
     }
 
-    const client = await MongoClient.connect(url, {
+    const url = process.env.MONGO_URL;
+
+    const client = cachedClient = await MongoClient.connect(url, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     });
-
-    cachedClient = client;
 
     return client;
 }

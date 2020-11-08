@@ -15,7 +15,10 @@ import { connect } from 'react-redux';
 const useStyles = makeStyles(theme => ({
     card: {
         width: '100%',
-        backgroundColor: '#a3bfb7'
+        backgroundColor: '#5bced5'
+    },
+    media:{
+        width: '100%'
     },
     buttonContainer: {
         height: '90pt'
@@ -41,28 +44,33 @@ function GoogleButton ({ login }){
             <Card className={classes.card}>
                 <CardContent>
                     <Grid container
-                        style={{
-                            height: '150pt'
-                        }}
                         justify="center"
                         alignContent="center"
                     >
+                        <Grid item xs={4}>
+                            <img src={require('../assets/drawpixer-logo.jpg')}
+                                alt="drawpixer-logo"
+                                className={classes.media}
+                            />
+                        </Grid>
                         <Grid item xs={9}>
-                        <Typography
-                            variant="h5" align="center" gutterBottom={true}
-                            className={classes.title}
-                        >
-                            Venha criar Pixel-arts <strong>
-                                Magníficas
-                            </strong> com DrawPixer
-                        </Typography>
+                            <Typography
+                                variant="h5" align="center" gutterBottom={true}
+                                className={classes.title}
+                            >
+                                Venha criar Pixel-arts <strong>
+                                    Magníficas
+                                </strong> com <strong>
+                                    DrawPixer
+                                </strong>
+                            </Typography>
 
-                        <Typography
-                            variant="body1" align="center" gutterBottom={true}
-                            className={classes.subtitle}
-                        >
-                            Para continuar, escolha uma das opções de Login abaixo
-                        </Typography>
+                            <Typography
+                                variant="body1" align="center" gutterBottom={true}
+                                className={classes.subtitle}
+                            >
+                                Para continuar, escolha uma das opções de acesso abaixo
+                            </Typography>
                         </Grid>
                     </Grid>
                 </CardContent>

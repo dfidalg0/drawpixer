@@ -39,7 +39,9 @@ const refresh = (timeout) => async (dispatch, getState) => {
             dispatch(refresh(exp - iat - 5 * 60));
         }
         catch (err) {
-            dispatch(refresh(60));
+            console.error(err);
+            // Tentar de novo dentro de 30 segundos
+            dispatch(refresh(30));
         }
     }, timeout * 1000);
 };
@@ -80,11 +82,12 @@ export const checkLogin = () => async dispatch => {
             dispatch(setToken(token));
             dispatch(loadUser());
         }
-
-        dispatch(setLoading(false));
     }
     catch (err) {
         console.error(err);
+    }
+    finally {
+        dispatch(setLoading(false));
     }
 }
 
@@ -97,7 +100,7 @@ export const logout = () => async (dispatch, getState) => {
 
         dispatch(setToken(null));
     }
-    catch(err) {
-        console.error(err);
+    catch({ response: { data } }) {
+        alert(data.message);
     }
 };

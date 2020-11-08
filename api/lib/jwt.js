@@ -10,7 +10,7 @@ export function sign(subject, payload){
     return new Promise((resolve, reject) => {
         jwt.sign(payload, secret, {
             subject,
-            expiresIn: 15 * 60// 15 minutos
+            expiresIn: 15 * 60 // 15 minutos
         }, (err, encoded) => {
             if (err) reject(err);
             else resolve(encoded);
