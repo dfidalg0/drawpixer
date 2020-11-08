@@ -3,14 +3,31 @@ import { MongoClient, Db } from 'mongodb';
 
 const url = process.env.MONGO_URL;
 
-let cachedDb = null;
+let cachedClient = null;
 
 /**
- * @returns {Db}
+ * @returns {Promise<Db>}
  */
-export default async function connectToDatabase() {
-    if (cachedDb) {
-        return cachedDb
+export async function getDb() {
+    const client = await getClient();
+
+    const db = client.db('drawpixer');
+
+    return db;
+}
+
+export async function getSession(){
+    const client = await getClient();
+
+    return client.startSession();
+}
+
+/**
+ * @returns {Promise<MongoClient>}
+ */
+async function getClient(){
+    if (cachedClient) {
+        return cachedClient;
     }
 
     const client = await MongoClient.connect(url, {
@@ -18,8 +35,7 @@ export default async function connectToDatabase() {
         useUnifiedTopology: true
     });
 
-    const db = await client.db('drawpixer');
+    cachedClient = client;
 
-    cachedDb = db
-    return db
+    return client;
 }

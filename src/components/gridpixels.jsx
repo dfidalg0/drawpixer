@@ -2,8 +2,9 @@ import React from 'react';
 import classes from '../styles/grid.module.css';
 import EditorSize from './editor-size';
 import Matrix from './matrix';
-import SaveImage from './saveImage'
-import BackButton from './backButton'
+import SaveImage from './saveImage';
+import BackButton from './backButton';
+import LogoutButton from './logout-button';
 
 export default class Editor extends React.Component {
     constructor(props) {
@@ -66,6 +67,7 @@ export default class Editor extends React.Component {
                             }}
                         />
                         <BackButton clicks={this.state.clicks} />
+                        <LogoutButton />
                     </div>
 
                     <div id="editorGridMatrix">
