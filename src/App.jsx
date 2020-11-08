@@ -5,15 +5,14 @@ import LoginScren from './views/login-screen';
 import Main from './views/main';
 
 import { connect } from 'react-redux';
-import { checkLogin, logout } from './store/actions/auth';
+import { checkLogin } from './store/actions/auth';
 
 import './App.css';
 
-function App({ loading, isAuthenticated, checkLogin, logout }) {
+function App({ loading, isAuthenticated, checkLogin }) {
     useEffect(() => {
         checkLogin();
-        setTimeout(logout, 10000);
-    }, [checkLogin, logout]);
+    }, [checkLogin]);
 
     return loading ?
         <LoadingScreen /> :
@@ -27,5 +26,5 @@ export default connect(
         isAuthenticated: Boolean(state.auth.token),
         loading: state.auth.loading
     }),
-    { checkLogin, logout }
+    { checkLogin }
 )(App);
