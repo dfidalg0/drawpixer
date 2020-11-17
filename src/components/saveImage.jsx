@@ -1,6 +1,4 @@
 import React from 'react';
-import html2canvas from 'html2canvas';
-
 import { Button, makeStyles } from '@material-ui/core';
 
 
@@ -17,49 +15,54 @@ export default function SaveImage({ size, setSize }) {
 
     const classes = useStyles();
 
-    function htmlToPng() {
-        html2canvas(document.querySelector("#editorGridMatrix")).then(canvas => {
-            var dimentions = document.getElementById("editorGridMatrix").getBoundingClientRect();
-            var dimSquare = document.getElementById('1').getBoundingClientRect().width;
+    function downloadImage() {
+        var dimSquare = document.getElementById('1').getBoundingClientRect().width;
+        var canvas = document.createElement('canvas');
 
-            var newImageX = (parseFloat(dimentions.width) - parseFloat(size[0]) * (parseFloat(dimSquare) - 1.0)) / 2.0;
-            var newWidth = parseFloat(size[0]) * (parseFloat(dimSquare) - 1.0);
-            var newHeight = parseFloat(size[1]) * (parseFloat(dimSquare) - 1.0);
-            var ctx = canvas.getContext('2d');
-            var imageData = ctx.getImageData(newImageX, 0, newWidth, newHeight);
+        var constMult = 1.5;
+        canvas.width = size[0] * dimSquare * constMult;
+        canvas.height = size[1] * dimSquare * constMult;
+        var ctx = canvas.getContext('2d');
+        ctx.strokeStyle = '#999';
+        ctx.lineWidth = 0.3;
+        ctx.fillStyle = '#999';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            var newCan = document.createElement('canvas');
-            newCan.width = newWidth;
-            newCan.height = newHeight;
-            var newCtx = newCan.getContext('2d');
-            newCtx.putImageData(imageData, 0, 0);
-
-            var imgURL = newCan.toDataURL("image/png");
-
-            var link = document.createElement('a');
-            link.download = 'pixelArt.png';
-            link.href = imgURL;
-
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            // save grid to local storage
-            var colorsGrid = [];
-            for (var id = 1; id <= size[0] * size[1]; id++) {
-                colorsGrid.push(document.getElementById(id).style.backgroundColor);
+        for (var x = 0; x < size[0]; x++) {
+            for (var y = 0; y < size[1]; y++) {
+                var id = size[0] * y + x + 1;
+                var element = document.getElementById(id);
+                ctx.fillStyle = element.style.backgroundColor;
+                ctx.fillRect((x * dimSquare + 0.25) * constMult, (y * dimSquare + 0.25) * constMult, (dimSquare - 0.5) * constMult, (dimSquare - 0.5) * constMult);
+                ctx.strokeRect((x * dimSquare + 0.25) * constMult, (y * dimSquare + 0.25) * constMult, (dimSquare - 0.5) * constMult, (dimSquare - 0.5) * constMult);
             }
-            var grid = {
-                x: size[0],
-                y: size[1],
-                colors: colorsGrid
-            }
+        }
+        var imgURL = canvas.toDataURL('image/png', 1.0);
+        var link = document.createElement('a');
+        link.download = 'pixelArt.png';
+        link.href = imgURL;
 
-            window.localStorage.setItem("currimage", JSON.stringify(grid));
-        });
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
-    function LoadImage() {
+    function saveLocalStorage() {
+        // save grid to local storage
+        var colorsGrid = [];
+        for (var id = 1; id <= size[0] * size[1]; id++) {
+            colorsGrid.push(document.getElementById(id).style.backgroundColor);
+        }
+        var grid = {
+            x: size[0],
+            y: size[1],
+            colors: colorsGrid
+        }
+
+        window.localStorage.setItem("currimage", JSON.stringify(grid));
+    }
+
+    function loadImage() {
         var item = window.localStorage.getItem("currimage");
         if (!item) alert("Não há imagem salva!");
         else {
@@ -77,14 +80,21 @@ export default function SaveImage({ size, setSize }) {
         <form className={classes.saveImg}>
             <Button
                 variant="contained" color="primary"
-                onClick={htmlToPng} size="large"
+                onClick={saveLocalStorage} size="large"
                 className={classes.button}
             >
                 Salvar Imagem
             </Button>
             <Button
                 variant="contained" color="primary"
-                onClick={LoadImage} size="large"
+                onClick={downloadImage} size="large"
+                className={classes.button}
+            >
+                Baixar Imagem
+            </Button>
+            <Button
+                variant="contained" color="primary"
+                onClick={loadImage} size="large"
                 className={classes.button}
             >
                 Carregar Imagem Salva
