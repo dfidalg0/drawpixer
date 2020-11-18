@@ -114,67 +114,79 @@ function LoginForm({ login, signin }){
         </Grid>
 
         {mode === 'register' ? <Grid container justify="center">
-            <TextField
-                InputProps={{
-                    className: classes.input
-                }}
-                InputLabelProps={{
-                    className: classes.inputLabel
-                }}
-                className={classes.field}
-                value={name}
-                onChange={e => setName(e.target.value)}
-                label="Nome"
-                variant="outlined"
-            />
+            <Grid item xs={11} sm={7}>
+                <TextField
+                    fullWidth
+                    InputProps={{
+                        className: classes.input
+                    }}
+                    InputLabelProps={{
+                        className: classes.inputLabel
+                    }}
+                    className={classes.field}
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                    label="Nome"
+                    variant="outlined"
+                />
+            </Grid>
         </Grid> : null}
         <Grid container justify="center">
-            <TextField
-                InputProps={{
-                    className: classes.input
-                }}
-                InputLabelProps={{
-                    className: classes.inputLabel
-                }}
-                className={classes.field}
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                label="Email"
-                variant="outlined"
-            />
+            <Grid item xs={11} sm={7}>
+                <TextField
+                    fullWidth
+                    InputProps={{
+                        className: classes.input
+                    }}
+                    InputLabelProps={{
+                        className: classes.inputLabel
+                    }}
+                    className={classes.field}
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    label="Email"
+                    variant="outlined"
+                />
+            </Grid>
         </Grid>
         <Grid container justify="center">
-            <TextField
-                InputProps={{
-                    className: classes.input
-                }}
-                InputLabelProps={{
-                    className: classes.inputLabel
-                }}
-                className={classes.field}
-                type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                label="Senha"
-                variant="outlined"
-            />
+            <Grid item xs={11} sm={7}>
+                <TextField
+                    fullWidth
+                    InputProps={{
+                        className: classes.input
+                    }}
+                    InputLabelProps={{
+                        className: classes.inputLabel
+                    }}
+                    className={classes.field}
+                    type="password"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    label="Senha"
+                    variant="outlined"
+                />
+            </Grid>
         </Grid>
 
         {mode === 'register' ? <Grid container justify="center">
-            <TextField
-                InputProps={{
-                    className: classes.input
-                }}
-                InputLabelProps={{
-                    className: classes.inputLabel
-                }}
-                className={classes.field}
-                type="password"
-                value={passConfirm}
-                onChange={e => setPassConfirm(e.target.value)}
-                label="Confirmar senha"
-                variant="outlined"
-            />
+            <Grid item xs={11} sm={7}>
+                <TextField
+                    fullWidth
+                    InputProps={{
+                        className: classes.input
+                    }}
+                    InputLabelProps={{
+                        className: classes.inputLabel
+                    }}
+                    className={classes.field}
+                    type="password"
+                    value={passConfirm}
+                    onChange={e => setPassConfirm(e.target.value)}
+                    label="Confirmar senha"
+                    variant="outlined"
+                />
+            </Grid>
         </Grid> : null}
 
         <Grid container justify="center">

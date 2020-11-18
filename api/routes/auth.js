@@ -44,7 +44,7 @@ routes.post('/login', async (req, res) => {
     }
 
     if (typeof password !== 'string'){
-        password = JSON.stringify(password);
+        password = JSON.stringify(password) || '';
     }
 
     try {
@@ -54,7 +54,10 @@ routes.post('/login', async (req, res) => {
         const user = await db.collection('users').findOne({ email }) || {};
 
         // Comparação da senha fornecida com o hash da senha armazenado no banco
-        const same = user.password && await bcrypt.compare(password, user.password);
+        const same = await bcrypt.compare(password, user.password || '');
+
+        // Obs.: '' nunca será o hash calculado de nada, logo
+        // bcrypt.compare(<qualquer coisa>, '') será false
 
         // same será true apenas se o usuário for encontrado no banco de dados
         // E, além disso, a senha digitada corresponder à original
