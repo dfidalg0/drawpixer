@@ -1,16 +1,26 @@
+// React
 import React from 'react';
-import GoogleLogin from 'react-google-login';
+
+// Material UI
 import {
     Grid, Card,
     CardActions,
     CardContent,
     Typography
 } from '@material-ui/core';
+
 import { makeStyles } from '@material-ui/core/styles';
 
+// Componentes
+import GoogleLogin from 'react-google-login';
+import LoginForm from '../components/login-form';
+
 // Redux
-import { login } from '../store/actions/auth';
+import { googleLogin } from '../store/actions/auth';
 import { connect } from 'react-redux';
+
+// Hooks
+import { useTheme, useMediaQuery } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -20,7 +30,8 @@ const useStyles = makeStyles(theme => ({
     card: {
         width: '100%',
         maxHeight: '90vh',
-        backgroundColor: '#5bced5'
+        backgroundColor: '#5bced5',
+        overflow: 'auto'
     },
     media:{
         width: '100%',
@@ -29,18 +40,27 @@ const useStyles = makeStyles(theme => ({
         }
     },
     buttonContainer: {
-        height: '90pt'
+        paddingBottom: '20pt'
     },
     title: {
         color: '#16191f'
     },
     subtitle: {
         color: '#282c34'
+    },
+    OR: {
+        marginTop: '10pt',
+        marginBottom: '10pt'
     }
 }));
 
-function GoogleButton ({ login }){
+function LoginScreen ({ googleLogin }){
+    const theme = useTheme();
     const classes = useStyles();
+
+    // Verifica se o usuário está vendo o site com uma tela
+    // de largura menor que "small"
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     return <Grid
         className={classes.root}
@@ -63,7 +83,8 @@ function GoogleButton ({ login }){
                         </Grid>
                         <Grid item xs={9}>
                             <Typography
-                                variant="h5" align="center" gutterBottom={true}
+                                variant={isMobile ? 'body2' : 'h5'}
+                                align="center" gutterBottom={true}
                                 className={classes.title}
                             >
                                 Venha criar Pixel-arts <strong>
@@ -87,10 +108,14 @@ function GoogleButton ({ login }){
                         className={classes.buttonContainer}
                         justify="center" alignContent="center"
                     >
+                        <LoginForm />
+                        <Grid container justify="center" className={classes.OR}>
+                            Ou
+                        </Grid>
                         <GoogleLogin
                             clientId="700716339246-aau8p35vfa84d5lgrf20g6nm196db0aa.apps.googleusercontent.com"
                             buttonText="Continuar com Google"
-                            onSuccess={login}
+                            onSuccess={googleLogin}
                             onFailure={console.error}
                         />
                     </Grid>
@@ -100,4 +125,4 @@ function GoogleButton ({ login }){
     </Grid>
 }
 
-export default connect(null, { login })(GoogleButton);
+export default connect(null, { googleLogin })(LoginScreen);

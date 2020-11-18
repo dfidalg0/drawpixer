@@ -1,6 +1,8 @@
 import express from 'express';
-import authRoutes from './routes/auth';
 import cookieParser from 'cookie-parser';
+
+// Rotas
+import authRoutes from './routes/auth';
 
 const app = express();
 

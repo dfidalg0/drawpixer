@@ -5,7 +5,11 @@ import { promisify } from 'util';
 const secret = process.env.JWT_SECRET;
 
 /**
- * @returns {Promise<string>}
+ * @description
+ * Assina um JWT para ser utilizado na autenticação
+ * @returns {Promise<string>} JWT assinado
+ * @param {string} subject ID do usuário para quem o JWT será assinado
+ * @param {any} payload Conteúdo do JWT assinado
  */
 export function sign(subject, payload){
     return new Promise((resolve, reject) => {
@@ -19,6 +23,12 @@ export function sign(subject, payload){
     });
 }
 
+/**
+ * @description
+ * Verifica se um JWT é valido e devolve o seu conteúdo
+ * @param {string} token JWT a ser verificado
+ * @returns {Promise<any>} Payload do JWT decodificado
+ */
 export function verify(token){
     return new Promise((resolve, reject) => {
         jwt.verify(token, secret, (err, decoded) => {
@@ -28,6 +38,11 @@ export function verify(token){
     });
 }
 
+/**
+ * @description
+ * Gera uma string aleatória grande em base64, usada como refresh token
+ * @returns {Promise<string>} Refresh token gerado
+ */
 export async function genRefreshToken(){
     return promisify(randomBytes)(432)
         .then(buffer => buffer.toString('base64')

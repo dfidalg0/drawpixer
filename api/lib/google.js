@@ -3,6 +3,8 @@ import { OAuth2Client } from 'google-auth-library';
 let cachedClient = null;
 
 /**
+ * @description
+ * Retorna um cliente de autenticação do Google configurado
  * @returns {OAuth2Client}
  */
 export function getClient(){
