@@ -1,9 +1,16 @@
 import express from 'express';
-import routes from './routes';
+import cookieParser from 'cookie-parser';
+
+// Rotas
+import authRoutes from './routes/auth';
 
 const app = express();
-app.use(express.json());
 
-app.use('/api', routes);
+app.set('trust proxy', 1);
+
+app.use(express.json());
+app.use(cookieParser());
+
+app.use('/api', authRoutes);
 
 export default app;

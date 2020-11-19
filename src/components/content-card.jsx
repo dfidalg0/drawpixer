@@ -78,15 +78,15 @@ export default function ContentCard({author, img, sub, desc, date}) {
             />
             <CardContent>
                 <Typography variant="body2" color="textSecondary" component="p">
-                {desc}
+                    {desc}
                 </Typography>
             </CardContent>
             <CardActions disableSpacing>
                 <IconButton aria-label="add to favorites">
-                <FavoriteIcon />
+                    <FavoriteIcon />
                 </IconButton>
                 <IconButton aria-label="share">
-                <ShareIcon />
+                    <ShareIcon />
                 </IconButton>
             </CardActions>
         </Card>

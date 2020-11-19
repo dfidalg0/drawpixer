@@ -1,4 +1,4 @@
 {
-    "rewrites": [{ "source": "/api/(.*)", "destination": "/api" }],
+    "routes": [{ "src": "/api/(.*)", "dest": "/api" }],
     "regions": ["gru1"]
 }
