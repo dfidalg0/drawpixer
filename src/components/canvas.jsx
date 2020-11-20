@@ -1,6 +1,4 @@
 import React, { useRef, useEffect } from 'react'
-import classes from '../styles/canvas.module.css';
-
 
 // elemento que dado um grid retorna um
 // canvas com os quadrados pintados
@@ -17,13 +15,33 @@ function Canvas({ grid }) {
         const canvas = canvasRef.current
         const ctx = canvas.getContext('2d')
 
+        try{
+            grid = JSON.parse(grid);
+            grid = {
+                x: grid.x,
+                y: grid.y,
+                colors: grid.colors
+            }
+        } catch(err){
+            console.log(err);
+        }
+
         // define tamanho do quadradinho para desenho não
         // ficar muito grande
         var square = grid.x > grid.y ? grid.x : grid.y;
         var dimSquare = 330 / square;
 
-        canvas.width = grid.x * dimSquare;
-        canvas.height = grid.y * dimSquare;
+        var iniX = 0;
+        var iniY = 0;
+
+        if(square === grid.x){
+            iniY = (330 - grid.y*dimSquare)/2
+        } else {
+            iniX = (330 - grid.x*dimSquare)/2
+        }
+
+        canvas.width = 330;
+        canvas.height = 330;
         
         // define cor da borda dos quadradinhos
         ctx.strokeStyle = '#999';
@@ -32,7 +50,7 @@ function Canvas({ grid }) {
         // desenha um retângulo branco inicial para evitar
         // que em algumas partes o fundo fique transparente
         ctx.fillStyle = '#999';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(iniX, iniY, canvas.width-2*iniX, canvas.height-2*iniY);
 
         // desenha os quadradinhos no canvas
         for (var x = 0; x < grid.x; x++) {
@@ -40,13 +58,13 @@ function Canvas({ grid }) {
                 var id = grid.x * y + x + 1;
                 var color = grid.colors[id-1];
                 ctx.fillStyle = color;
-                ctx.fillRect((x * dimSquare + 0.25), (y * dimSquare + 0.25), (dimSquare - 0.5), (dimSquare - 0.5));
-                ctx.strokeRect((x * dimSquare + 0.25), (y * dimSquare + 0.25), (dimSquare - 0.5), (dimSquare - 0.5));
+                ctx.fillRect((x * dimSquare + 0.25) + iniX, (y * dimSquare + 0.25) + iniY, (dimSquare - 0.5), (dimSquare - 0.5));
+                ctx.strokeRect((x * dimSquare + 0.25) + iniX, (y * dimSquare + 0.25) + iniY, (dimSquare - 0.5), (dimSquare - 0.5));
             }
         }
     })
 
-    return <canvas ref={canvasRef} className={classes.canvas} />
+    return <canvas ref={canvasRef} />
 }
 
 export default Canvas
