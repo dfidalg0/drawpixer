@@ -1,5 +1,11 @@
 import React from 'react';
-import { Button, makeStyles } from '@material-ui/core';
+import { useState } from 'react';
+import { connect } from 'react-redux'
+
+import { Button, makeStyles, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from '@material-ui/core';
+
+import { saveDrawing } from '../store/actions/drawings';
+import DownloadImage from '../components/downloadImage';
 
 
 const useStyles = makeStyles(theme => ({
@@ -11,56 +17,62 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export default function SaveImage({ size, setSize }) {
+function SaveImage({ size, setSize, saveDrawing }) {
 
     const classes = useStyles();
 
-    function downloadImage() {
-        var dimSquare = document.getElementById('1').getBoundingClientRect().width;
-        var canvas = document.createElement('canvas');
+    const [title, setTitle] = useState('');
+    const [open, setOpen] = useState(false);
 
-        var constMult = 1.5;
-        canvas.width = size[0] * dimSquare * constMult;
-        canvas.height = size[1] * dimSquare * constMult;
-        var ctx = canvas.getContext('2d');
-        ctx.strokeStyle = '#999';
-        ctx.lineWidth = 0.3;
-        ctx.fillStyle = '#999';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
 
-        for (var x = 0; x < size[0]; x++) {
-            for (var y = 0; y < size[1]; y++) {
-                var id = size[0] * y + x + 1;
-                var element = document.getElementById(id);
-                ctx.fillStyle = element.style.backgroundColor;
-                ctx.fillRect((x * dimSquare + 0.25) * constMult, (y * dimSquare + 0.25) * constMult, (dimSquare - 0.5) * constMult, (dimSquare - 0.5) * constMult);
-                ctx.strokeRect((x * dimSquare + 0.25) * constMult, (y * dimSquare + 0.25) * constMult, (dimSquare - 0.5) * constMult, (dimSquare - 0.5) * constMult);
-            }
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleSubmit = () => {
+        if (title.length > 0) {
+            var grid = getJsonDrawing();
+            saveDrawing(title, grid);
+        } else {
+            alert("Título Inválido");
         }
-        var imgURL = canvas.toDataURL('image/png', 1.0);
-        var link = document.createElement('a');
-        link.download = 'pixelArt.png';
-        link.href = imgURL;
+    };
 
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+    const onChange = e => setTitle(e.target.value);
+
+    function rgb2hex(rgb) {
+        if (rgb.search("rgb") === -1) {
+            return rgb;
+        } else {
+            rgb = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+))?\)$/);
+            function hex(x) {
+                return ("0" + parseInt(x).toString(16)).slice(-2);
+            }
+            return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+        }
     }
 
-    function saveLocalStorage() {
-        // save grid to local storage
+    function getJsonDrawing() {
         var colorsGrid = [];
         for (var id = 1; id <= size[0] * size[1]; id++) {
-            colorsGrid.push(document.getElementById(id).style.backgroundColor);
+            colorsGrid.push(rgb2hex(document.getElementById(id).style.backgroundColor));
         }
         var grid = {
             x: size[0],
             y: size[1],
             colors: colorsGrid
         }
-
-        window.localStorage.setItem("currimage", JSON.stringify(grid));
+        return JSON.stringify(grid);
     }
+
+    // function saveLocalStorage() {
+    //     // save grid to local storage
+    //     var grid = getJsonDrawing();
+    //     window.localStorage.setItem("currimage", grid);
+    // }
 
     function loadImage() {
         var item = window.localStorage.getItem("currimage");
@@ -77,28 +89,51 @@ export default function SaveImage({ size, setSize }) {
     }
 
     return (
-        <form className={classes.saveImg}>
-            <Button
-                variant="contained" color="primary"
-                onClick={saveLocalStorage} size="large"
-                className={classes.button}
-            >
-                Salvar Imagem
+        <div>
+            <div>
+                <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                    <DialogTitle id="form-dialog-title">Salvar</DialogTitle>
+                    <DialogContent>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="titulo"
+                            label="Título"
+                            fullWidth
+                            onChange={onChange}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose} color="primary">
+                            Cancelar
+                        </Button>
+                        <Button onClick={handleSubmit} color="primary">
+                            Salvar
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
+            <form className={classes.saveImg}>
+
+                <Button
+                    variant="contained" color="primary"
+                    onClick={handleClickOpen} size="large"
+                    className={classes.button}
+                >
+                    Salvar Imagem
             </Button>
-            <Button
-                variant="contained" color="primary"
-                onClick={downloadImage} size="large"
-                className={classes.button}
-            >
-                Baixar Imagem
+                <DownloadImage size={size} />
+                <Button
+                    variant="contained" color="primary"
+                    onClick={loadImage} size="large"
+                    className={classes.button}
+                >
+                    Carregar Imagem Salva
             </Button>
-            <Button
-                variant="contained" color="primary"
-                onClick={loadImage} size="large"
-                className={classes.button}
-            >
-                Carregar Imagem Salva
-            </Button>
-        </form>
+            </form>
+        </div>
     );
 }
+
+
+export default connect(null, { saveDrawing })(SaveImage);

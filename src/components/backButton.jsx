@@ -11,14 +11,21 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
+// Botão para desfazer os últimos movimentos
+// feitos pelo usuário na matriz de pixels
+// clicks: estrutura que contém id e cores dos 
+// últimos quadrados pressionados.
+
 export default function BackButton({ clicks }) {
 
     const classes = useStyles();
 
     function backLastClick() {
+        // se tiver movimento para desfazer
         if (clicks.button.length > 0) {
             var button = clicks.button.pop();
             var color = clicks.color.pop();
+            // volta para a cor anterior
             document.getElementById(button).style.backgroundColor = color;
         }
     }

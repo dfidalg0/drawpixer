@@ -2,6 +2,8 @@
 import { Request, Response, NextFunction } from 'express';
 import * as jwt from '../lib/jwt';
 
+import { ObjectID } from 'mongodb';
+
 /**
  * @param {Request} req
  * @param {Response} res
@@ -17,13 +19,13 @@ const verifyMiddleware = async (req, res, next) => {
 
         // Atribuição da variável req.user
         req.user = {
-            _id: sub,
+            _id: new ObjectID(sub),
             ...payload // { name, email }
         };
 
         return next();
     }
-    catch (err){
+    catch (err) {
         // No caso de erro, a validação foi falha, logo, o token é inválido
         return res.status(401).json({
             message: 'Credenciais inválidas'
