@@ -15,7 +15,7 @@ export default function DownLoadImage({ size }) {
     const classes = useStyles();
 
     function downloadImage() {
-        var dimSquare = document.getElementById('1').getBoundingClientRect().width;
+        var dimSquare = document.getElementById('square-1').getBoundingClientRect().width;
         var canvas = document.createElement('canvas');
 
         var constMult = 1.5;
@@ -30,7 +30,7 @@ export default function DownLoadImage({ size }) {
         for (var x = 0; x < size[0]; x++) {
             for (var y = 0; y < size[1]; y++) {
                 var id = size[0] * y + x + 1;
-                var element = document.getElementById(id);
+                var element = document.getElementById(`square-${id}`);
                 ctx.fillStyle = element.style.backgroundColor;
                 ctx.fillRect((x * dimSquare + 0.25) * constMult, (y * dimSquare + 0.25) * constMult, (dimSquare - 0.5) * constMult, (dimSquare - 0.5) * constMult);
                 ctx.strokeRect((x * dimSquare + 0.25) * constMult, (y * dimSquare + 0.25) * constMult, (dimSquare - 0.5) * constMult, (dimSquare - 0.5) * constMult);

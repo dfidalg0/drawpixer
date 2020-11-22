@@ -3,55 +3,60 @@ import { authenticate } from '../middlewares/auth'
 
 import * as mongo from '../lib/mongo';
 
+import pick from 'lodash.pick';
+
 const routes = Router();
 routes.use(authenticate());
 
 // rota para salvar desenho no banco de dados
-// deve receber o título do desenho e 
+// deve receber o título do desenho e
 // estrutura com informações do grid (dimensões e cores)
 // no corpo da requisição
 
-routes.post('/saveDrawing', async (req, res) => {
-    const id = req.user._id;
-    const title = req.body.title;
-    const grid = req.body.grid;
+routes.post('/drawings/create', async (req, res) => {
+    const user = pick(req.user, ['_id', 'name']);
+    const { title, grid } = req.body;
+
+    const errors = [];
+
+    if (typeof title !== 'string'){
+        errors.push('title');
+    }
+
+    if (typeof grid.x !== 'number' || grid.x <= 0){
+        errors.push('grid.x');
+    }
+
+    if (typeof grid.y !== 'number' || grid.y <= 0){
+        errors.push('grid.y');
+    }
+
+    if (!(
+        grid.colors instanceof Array &&
+        grid.colors.length === grid.x * grid.y &&
+        grid.colors.every(color => color.match(/#[a-f0-9]{6}/))
+    )) {
+        errors.push('grid.colors');
+    }
+
+    if (errors.length){
+        return res.status(422).json({
+            message: 'Formulário inválido',
+            fields: errors
+        });
+    }
 
     try {
-        // Flag de existência
-        let alreadyExists = false;
-
-        const session = await mongo.getSession();
         const db = await mongo.getDb();
 
-        // Transação no banco para desenho
-        await session.withTransaction(async () => {
+        // Busca por id de usuário e titulo do desenho (e insere caso não exista)
+        const { insertedId } = await db.collection('drawings').insertOne(
+            { title, grid, user }
+        );
 
-            // Busca por id de usuário e titulo do desenho (e insere caso não exista)
-            const { upsertedId } = await db.collection('drawings').updateOne(
-                { id, title },
-                { $setOnInsert: { id, title, grid } },
-                { session, returnOriginal: false, upsert: true }
-            );
-
-            // Se não ocorreu upsert, já existia um desenho deste usuário com este título.
-            if (!upsertedId) {
-                await session.abortTransaction();
-                return alreadyExists = true;
-            }
+        return res.json({
+            _id: insertedId
         });
-
-        session.endSession();
-
-        if (alreadyExists) {
-            return res.status(409).json({
-                message: 'Desenho{ drawings }com este título já existe!'
-            });
-        }
-        else {
-            return res.status(200).json({
-                message: 'Desenho cadastrado com sucesso!'
-            })
-        }
     }
     catch (err) {
         console.error(err.message);
@@ -62,18 +67,18 @@ routes.post('/saveDrawing', async (req, res) => {
 });
 
 // rota para retornar todos os desenhos do usuário logado
-routes.get('/getUserDrawings', async (req, res) => {
-
-    const id = req.user._id;
+routes.get('/drawings/mine', async (req, res) => {
+    const user_id = req.user._id;
 
     try {
         const db = await mongo.getDb();
 
         // Busca dos desenhos no banco de dados
-        const drawings = await db.collection('drawings').find({ id }).toArray() || {};
-        return res.status(200).json({
-            drawings
-        });
+        const drawings = await db.collection('drawings').find({
+            'user._id': user_id
+        }).toArray();
+
+        return res.json(drawings);
     }
     catch (err) {
         console.error(err.message);

@@ -12,19 +12,8 @@ function Canvas({ grid }) {
     const canvasRef = useRef(null);
 
     useEffect(() => {
-        const canvas = canvasRef.current
-        const ctx = canvas.getContext('2d')
-
-        try{
-            grid = JSON.parse(grid);
-            grid = {
-                x: grid.x,
-                y: grid.y,
-                colors: grid.colors
-            }
-        } catch(err){
-            console.log(err);
-        }
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
 
         // define tamanho do quadradinho para desenho não
         // ficar muito grande
@@ -42,7 +31,7 @@ function Canvas({ grid }) {
 
         canvas.width = 330;
         canvas.height = 330;
-        
+
         // define cor da borda dos quadradinhos
         ctx.strokeStyle = '#999';
         ctx.lineWidth = 0.3;
@@ -62,7 +51,7 @@ function Canvas({ grid }) {
                 ctx.strokeRect((x * dimSquare + 0.25) + iniX, (y * dimSquare + 0.25) + iniY, (dimSquare - 0.5), (dimSquare - 0.5));
             }
         }
-    })
+    }, [grid])
 
     return <canvas ref={canvasRef} />
 }

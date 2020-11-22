@@ -4,7 +4,7 @@ export const saveDrawing = (title, grid) => async (dispatch, getState) => {
     var state = getState();
     const { token } = state.auth;
     try {
-        await axios.post('/api/saveDrawing', {
+        await axios.post('/api/drawings/create', {
             title: title,
             grid: grid,
         }, {
@@ -25,7 +25,7 @@ export const getUserDrawings = () => async (dispatch, getState) => {
     var state = getState();
     const { token } = state.auth;
     try {
-        const response = await axios.get('/api/getUserDrawings', {
+        const response = await axios.get('/api/drawings/mine', {
             headers: {
                 Authorization: token
             }

@@ -1,12 +1,20 @@
 import React from 'react';
-import { useState } from 'react';
 import { connect } from 'react-redux'
 
-import { Button, makeStyles, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from '@material-ui/core';
+import {
+    Button, TextField, Dialog, DialogActions,
+    DialogContent, DialogTitle
+} from '@material-ui/core';
+
+import { makeStyles } from '@material-ui/core/styles';
 
 import { saveDrawing } from '../store/actions/drawings';
 import DownloadImage from '../components/downloadImage';
 
+import EditorContext from './context/editor';
+
+// Hooks
+import { useState, useEffect, useCallback, useContext } from 'react';
 
 const useStyles = makeStyles(theme => ({
     button: {
@@ -17,29 +25,43 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-function SaveImage({ size, setSize, saveDrawing }) {
-
+function SaveImage({ saveDrawing }) {
     const classes = useStyles();
+
+    const { size, setSize } = useContext(EditorContext);
 
     const [title, setTitle] = useState('');
     const [open, setOpen] = useState(false);
 
-    const handleClickOpen = () => {
+    const handleClickOpen = useCallback(() => {
         setOpen(true);
-    };
+    }, []);
 
-    const handleClose = () => {
+    const handleClose = useCallback(() => {
         setOpen(false);
-    };
+    }, []);
 
-    const handleSubmit = () => {
+    const getGrid = useCallback(() => {
+        const [x, y] = size;
+        const colors = [];
+
+        const squares = document.querySelectorAll('button[id^="square-"]');
+
+        for (const square of squares) {
+            const color = rgb2hex(square.style.backgroundColor);
+            colors.push(color);
+        }
+        return { x, y, colors };
+    }, [size]);
+
+    const handleSubmit = useCallback(() => {
         if (title.length > 0) {
-            var grid = getJsonDrawing();
+            var grid = getGrid();
             saveDrawing(title, grid);
         } else {
             alert("Título Inválido");
         }
-    };
+    }, [title, getGrid, saveDrawing]);
 
     const onChange = e => setTitle(e.target.value);
 
@@ -55,72 +77,65 @@ function SaveImage({ size, setSize, saveDrawing }) {
         }
     }
 
-    function getJsonDrawing() {
-        var colorsGrid = [];
-        for (var id = 1; id <= size[0] * size[1]; id++) {
-            colorsGrid.push(rgb2hex(document.getElementById(id).style.backgroundColor));
-        }
-        var grid = {
-            x: size[0],
-            y: size[1],
-            colors: colorsGrid
-        }
-        return JSON.stringify(grid);
-    }
-
     // function saveLocalStorage() {
     //     // save grid to local storage
     //     var grid = getJsonDrawing();
     //     window.localStorage.setItem("currimage", grid);
     // }
 
-    function loadImage() {
-        var item = window.localStorage.getItem("currimage");
+    const [img, setImg] = useState(null);
+
+    useEffect(() => {
+        if (img){
+            setSize([img.x, img.y]);
+
+            for (var id = 1; id <= img.x * img.y; id++) {
+                const square = document.getElementById(`square-${id}`);
+                square.style.backgroundColor = img.colors[id - 1];
+            }
+
+            setImg(null);
+        }
+    }, [img, setSize]);
+
+    const loadImage = useCallback(() => {
+        const item = window.localStorage.getItem("currimage");
         if (!item) alert("Não há imagem salva!");
         else {
-            var img = JSON.parse(item);
-            setSize([img.x, img.y]);
-            setTimeout(() => {
-                for (var id = 1; id <= img.x * img.y; id++) {
-                    document.getElementById(id).style.backgroundColor = img.colors[id - 1];
-                }
-            }, 500);
+            setImg(JSON.parse(item));
         }
-    }
+    }, []);
 
     return (
-        <div>
-            <div>
-                <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                    <DialogTitle id="form-dialog-title">Salvar</DialogTitle>
-                    <DialogContent>
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            id="titulo"
-                            label="Título"
-                            fullWidth
-                            onChange={onChange}
-                        />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleClose} color="primary">
-                            Cancelar
-                        </Button>
-                        <Button onClick={handleSubmit} color="primary">
-                            Salvar
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-            </div>
-            <form className={classes.saveImg}>
+        <>
+            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                <DialogTitle id="form-dialog-title">Salvar</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="titulo"
+                        label="Título"
+                        fullWidth
+                        onChange={onChange}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} color="primary">
+                        Cancelar
+                    </Button>
+                    <Button onClick={handleSubmit} color="primary">
+                        Salvar
+                    </Button>
+                </DialogActions>
+            </Dialog>
 
-                <Button
-                    variant="contained" color="primary"
-                    onClick={handleClickOpen} size="large"
-                    className={classes.button}
-                >
-                    Salvar Imagem
+            <Button
+                variant="contained" color="primary"
+                onClick={handleClickOpen} size="large"
+                className={classes.button}
+            >
+                Salvar Imagem
             </Button>
                 <DownloadImage size={size} />
                 <Button
@@ -130,8 +145,7 @@ function SaveImage({ size, setSize, saveDrawing }) {
                 >
                     Carregar Imagem Salva
             </Button>
-            </form>
-        </div>
+        </>
     );
 }
 
