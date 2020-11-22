@@ -1,6 +1,10 @@
 import React from 'react';
 import { TextField, Button, makeStyles } from '@material-ui/core';
-import UserPixers from '../components/userPixers';
+import UserPixers from './userPixers';
+
+import SaveImage from './saveImage';
+import BackButton from './backButton';
+import LogoutButton from './logout-button';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -23,12 +27,12 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-// Inclui o botão para o usuário abrir aba 
-// lateral com seus desenhos (UserPixers), 
+// Inclui o botão para o usuário abrir aba
+// lateral com seus desenhos (UserPixers),
 // formulário de entrada para tamanho da matriz de pixels e
 // botão de limpar grade
 
-export default function EditorSize({ onChange, clean, size }) {
+export default function LeftBar({ onChange, clean, size }) {
     const classes = useStyles();
 
     return (
@@ -71,7 +75,10 @@ export default function EditorSize({ onChange, clean, size }) {
                     className={classes.button}
                 >
                     Limpar grade
-            </Button>
+                </Button>
+                <SaveImage />
+                <BackButton />
+                <LogoutButton />
             </form>
         </div>
     );

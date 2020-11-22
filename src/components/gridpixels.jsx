@@ -1,10 +1,11 @@
 import React from 'react';
 import classes from '../styles/grid.module.css';
-import EditorSize from './editor-size';
+import LeftBar from './left-bar';
 import Matrix from './matrix';
-import SaveImage from './saveImage';
-import BackButton from './backButton';
-import LogoutButton from './logout-button';
+
+import EditorContext from './context/editor';
+
+import pick from 'lodash.pick';
 
 export default class Editor extends React.Component {
     constructor(props) {
@@ -38,7 +39,7 @@ export default class Editor extends React.Component {
         event.preventDefault();
         const { size } = this.state;
         for(let id = 1; id <= size[0] * size[1]; ++id){
-            document.getElementById(id).style.backgroundColor = '#ffffff';
+            document.getElementById(`square-${id}`).style.backgroundColor = '#ffffff';
         }
         this.setState({
             clicks: {
@@ -50,37 +51,31 @@ export default class Editor extends React.Component {
 
     render() {
         return (
-            <div className={classes.outerEditorGrid}>
-                <div className={classes.editorGrid} align="center">
-                    <div className={classes.editorSize}>
-                        <EditorSize
-                            size={this.state.size}
-                            onChange={this.editorSizeFormChangeHandler}
-                            clean={this.cleanGrid}
-                        />
-                        <SaveImage size={this.state.size}
-                            setSize={size => {
-                                this.setState({ size, clicks: {
-                                    button: [],
-                                    color: []
-                                } });
-                            }}
-                        />
-                        <BackButton clicks={this.state.clicks} />
-                        <LogoutButton />
-                    </div>
+            <EditorContext.Provider value={{
+                ...pick(this.state, [
+                    'size',
+                    'clicks'
+                ]),
+                setSize: size => this.setState({ size }),
+                setClicks: clicks => this.setState({ clicks })
+            }}>
+                <div className={classes.outerEditorGrid}>
+                    <div className={classes.editorGrid} align="center">
+                        <div className={classes.editorSize}>
+                            <LeftBar
+                                size={this.state.size}
+                                onChange={this.editorSizeFormChangeHandler}
+                                clean={this.cleanGrid}
+                            />
+                        </div>
 
-                    <div id="editorGridMatrix">
-                        <Matrix
-                            size={this.state.size}
-                            clicks={this.state.clicks}
-                            color={this.props.color}
-                            setClicks={clicks => this.setState({ clicks })}
-                        />
-                    </div>
+                        <div id="editorGridMatrix">
+                            <Matrix color={this.props.color}/>
+                        </div>
 
+                    </div>
                 </div>
-            </div>
+            </EditorContext.Provider>
         );
     }
 }

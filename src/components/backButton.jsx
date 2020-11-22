@@ -1,6 +1,8 @@
 import React from 'react';
 import { Button, makeStyles } from '@material-ui/core';
 
+import EditorContext from './context/editor';
+import { useContext } from 'react';
 
 const useStyles = makeStyles(theme => ({
     button: {
@@ -13,33 +15,32 @@ const useStyles = makeStyles(theme => ({
 
 // Botão para desfazer os últimos movimentos
 // feitos pelo usuário na matriz de pixels
-// clicks: estrutura que contém id e cores dos 
+// clicks: estrutura que contém id e cores dos
 // últimos quadrados pressionados.
 
-export default function BackButton({ clicks }) {
+export default function BackButton() {
+    const { clicks } = useContext(EditorContext);
 
     const classes = useStyles();
 
     function backLastClick() {
         // se tiver movimento para desfazer
         if (clicks.button.length > 0) {
-            var button = clicks.button.pop();
-            var color = clicks.color.pop();
+            const button = clicks.button.pop();
+            const color = clicks.color.pop();
             // volta para a cor anterior
-            document.getElementById(button).style.backgroundColor = color;
+            document.getElementById(`square-${button}`).style.backgroundColor = color;
         }
     }
 
     return (
-        <form className={classes.backButton}>
-            <Button
-                disabled={!clicks.button.length}
-                variant="contained" color="primary"
-                onClick={backLastClick} size="large"
-                className={classes.button}
-            >
-                Desfazer
-            </Button>
-        </form>
+        <Button
+            disabled={!clicks.button.length}
+            variant="contained" color="primary"
+            onClick={backLastClick} size="large"
+            className={classes.button}
+        >
+            Desfazer
+        </Button>
     );
 }

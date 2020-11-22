@@ -2,9 +2,15 @@ import React from 'react';
 import Square from './square';
 import classes from '../styles/grid.module.css';
 
+import EditorContext from './context/editor';
+
+import { useContext } from 'react';
+
 const maxSize = Math.min(window.innerHeight, window.innerWidth);
 
-export default function Matrix({ size, color, clicks, setClicks }) {
+export default function Matrix({ color }) {
+    const { size, clicks, setClicks } = useContext(EditorContext);
+
     let matrix = [];
     let row = [];
     let squareSize;
