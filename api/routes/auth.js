@@ -95,7 +95,7 @@ routes.post('/login', async (req, res) => {
 });
 
 // Rota para cadastro convencional
-routes.post('/signin', async (req, res) => {
+routes.post('/register', async (req, res) => {
     // Obtenção de dados de formulário
     const { name, email, password, passConfirm} = req.body;
 

@@ -24,7 +24,7 @@ function App({ loading, isAuthenticated, checkLogin }) {
 export default connect(
     state => ({
         isAuthenticated: Boolean(state.auth.token),
-        loading: state.auth.loading
+        loading: state.ui.loading
     }),
     { checkLogin }
 )(App);

@@ -2,12 +2,13 @@
 import {
     SET_TOKEN,
     SET_USER,
-    SET_LOAD
 } from './types';
 
 // Bibliotecas auxiliares
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
+
+import { setLoading } from './ui';
 
 // Criadores de ações básicas
 const setToken = token => ({
@@ -19,11 +20,6 @@ const setUser = user => ({
     type: SET_USER,
     user
 });
-
-const setLoading = loading => ({
-    type: SET_LOAD,
-    loading
-})
 
 // Objeto para controle da rotação do token de acesso
 let refreshTimeout;
@@ -122,13 +118,13 @@ export const login = (email, password) => async dispatch => {
     }
 };
 
-export const signin = (name, email, password, passConfirm) => async dispatch => {
+export const register = (name, email, password, passConfirm) => async dispatch => {
     try {
         // Aplicação colocada em estado de carregamento
         dispatch(setLoading(true));
 
         // Obtenção do token de acesso a partir do cadastro
-        const { data: { token } } = await axios.post('/api/signin', {
+        const { data: { token } } = await axios.post('/api/register', {
             name, email, password, passConfirm
         });
 
@@ -172,9 +168,6 @@ export const checkLogin = () => async dispatch => {
 
 // Logout do usuário
 export const logout = () => async (dispatch, getState) => {
-    // Interrupção do ciclo de rotação de tokens
-    clearTimeout(refreshTimeout);
-
     // Obtenção do token de acesso atual
     const { auth: { token } } = getState();
 
@@ -185,8 +178,12 @@ export const logout = () => async (dispatch, getState) => {
         // Destruição dos tokens de acesso e refresh
         await axios.post('/api/jwt/destroy', { token });
 
+        // Interrupção do ciclo de rotação de tokens
+        clearTimeout(refreshTimeout);
+
         // Atualização do token no estado do Redux
         dispatch(setToken(null));
+        dispatch(setUser(null));
     }
     catch({ response: { data } }) {
         alert(data.message);

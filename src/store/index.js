@@ -4,8 +4,9 @@ import thunk from 'redux-thunk';
 
 // Reducers
 import auth from './reducers/auth';
+import ui from './reducers/ui';
 
-const reducers = { auth };
+const reducers = { auth, ui };
 
 const store = createStore(
     combineReducers(reducers),

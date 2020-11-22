@@ -8,7 +8,7 @@ import { makeStyles } from '@material-ui/core';
 import { isEmail } from 'validator';
 
 // Redux
-import { login, signin } from '../store/actions/auth';
+import { login, register } from '../store/actions/auth';
 import { connect } from 'react-redux';
 
 // Hooks
@@ -57,7 +57,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-function LoginForm({ login, signin }){
+function LoginForm({ login, register }){
     const classes = useStyles();
 
     // Modo ("login" ou "register")
@@ -85,9 +85,9 @@ function LoginForm({ login, signin }){
             login(email, password);
         }
         else {
-            signin(name, email, password, passConfirm);
+            register(name, email, password, passConfirm);
         }
-    }, [mode, name, email, password, passConfirm, login, signin]);
+    }, [mode, name, email, password, passConfirm, login, register]);
 
     // Possibilidade de envio através do Enter
     useEffect(() => {
@@ -214,4 +214,4 @@ function LoginForm({ login, signin }){
     </Grid>
 }
 
-export default connect(null, { login, signin })(LoginForm);
+export default connect(null, { login, register })(LoginForm);
