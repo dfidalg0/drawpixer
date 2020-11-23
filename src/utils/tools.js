@@ -1,3 +1,7 @@
+/**
+ * @param {string} rgb
+ * @returns {string} RGB convertido para Hexadecimal
+ */
 export function rgb2hex(rgb) {
     const hex = (x) => {
         return ('0' +  parseInt(x).toString(16)).slice(-2);

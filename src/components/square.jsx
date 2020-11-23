@@ -25,6 +25,28 @@ export default function Square({ size, squareId }) {
         }
     }, [setClicks, setUndos, squareId]);
 
+    const onMouseOver = useCallback(() => {
+        if (window.mouseDown) {
+            if (window.button === 2)
+                changeColor('#ffffff');
+            else
+                changeColor(penColor);
+        }
+    }, [penColor, changeColor]);
+
+    const onMouseDown = useCallback(e => {
+        if (e.button === 0) {
+            changeColor(penColor);
+        } else if (e.button === 2) {
+            changeColor('#ffffff');
+        }
+    }, [penColor, changeColor]);
+
+    const onContextMenu = useCallback(event => {
+        event.preventDefault();
+        event.stopPropagation();
+    }, []);
+
     let height, width, minHeight, minWidth;
 
     minHeight = minWidth = height = width = size ? size : 34;
@@ -37,25 +59,9 @@ export default function Square({ size, squareId }) {
                 height, width, minHeight, minWidth
             }}
             draggable={false}
-            onMouseOver={() => {
-                if (window.mouseDown) {
-                    if (window.button === 2)
-                        changeColor('#ffffff');
-                    else
-                        changeColor(penColor);
-                }
-            }}
-            onMouseDown={e => {
-                if (e.button === 0) {
-                    changeColor(penColor);
-                } else if (e.button === 2) {
-                    changeColor('#ffffff');
-                }
-            }}
-            onContextMenu={event => {
-                event.preventDefault();
-                event.stopPropagation();
-            }}
+            onMouseOver={onMouseOver}
+            onMouseDown={onMouseDown}
+            onContextMenu={onContextMenu}
         >
         </button >
     );
