@@ -13,6 +13,9 @@ import DownloadImage from '../components/downloadImage';
 
 import EditorContext from './context/editor';
 
+import { rgb2hex } from '../utils/tools';
+import { getSquares } from '../utils/dom-helpers';
+
 // Hooks
 import { useState, useCallback, useContext } from 'react';
 
@@ -35,7 +38,7 @@ function SaveImage({ saveDrawing }) {
         const [x, y] = size;
         const colors = [];
 
-        const squares = document.querySelectorAll('button[id^="square-"]');
+        const squares = getSquares();
 
         for (const square of squares) {
             const color = rgb2hex(square.style.backgroundColor);
@@ -65,18 +68,6 @@ function SaveImage({ saveDrawing }) {
     }, [title, getGrid, saveDrawing]);
 
     const onChange = useCallback(e => setTitle(e.target.value), []);
-
-    function rgb2hex(rgb) {
-        if (rgb.search("rgb") === -1) {
-            return rgb;
-        } else {
-            rgb = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+))?\)$/);
-            function hex(x) {
-                return ("0" + parseInt(x).toString(16)).slice(-2);
-            }
-            return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
-        }
-    }
 
     const saveToLocalStorage = useCallback(() => {
         const grid = getGrid();

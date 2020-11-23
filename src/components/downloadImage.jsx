@@ -3,6 +3,8 @@ import { Button, makeStyles } from '@material-ui/core';
 
 import EditorContext from './context/editor';
 
+import { getSquares } from '../utils/dom-helpers';
+
 import { useContext, useCallback } from 'react';
 
 const useStyles = makeStyles(theme => ({
@@ -20,7 +22,7 @@ export default function DownLoadImage() {
     const { size } = useContext(EditorContext);
 
     const downloadImage = useCallback(() => {
-        const squares = document.querySelectorAll('button[id^="square-"]');
+        const squares = getSquares();
 
         const dimSquare = squares[0].getBoundingClientRect().width;
         const canvas = document.createElement('canvas');

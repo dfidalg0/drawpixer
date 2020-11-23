@@ -6,6 +6,8 @@ import {
 
 import { makeStyles } from '@material-ui/core/styles';
 
+import { getSquares } from '../utils/dom-helpers';
+
 import ColorPicker from './colorpicker';
 import LeftBar from './left-bar';
 import Matrix from './matrix';
@@ -91,7 +93,7 @@ export default function Editor(){
 
     useEffect(() => {
         if (paint){
-            const squares = document.querySelectorAll('button[id^="square-"]');
+            const squares = getSquares();
 
             for (let i = 0; i < squares.length; ++i) {
                 const square = squares[i];
@@ -109,7 +111,7 @@ export default function Editor(){
 
         if (value){
             value = Number(value);
-            if (value < 0 || value > 75) return;
+            if (value < 0 || value > 80) return;
         }
         else
             value = '';
