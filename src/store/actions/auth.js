@@ -9,6 +9,7 @@ import axios from 'axios';
 import jwt from 'jsonwebtoken';
 
 import { setLoading } from './ui';
+import { clearDrawings } from './drawings';
 
 // Criadores de ações básicas
 const setToken = token => ({
@@ -181,9 +182,10 @@ export const logout = () => async (dispatch, getState) => {
         // Interrupção do ciclo de rotação de tokens
         clearTimeout(refreshTimeout);
 
-        // Atualização do token no estado do Redux
+        // Remoção de todos os estados associados ao usuário no Redux
         dispatch(setToken(null));
         dispatch(setUser(null));
+        dispatch(clearDrawings());
     }
     catch({ response: { data } }) {
         alert(data.message);

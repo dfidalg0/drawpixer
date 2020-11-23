@@ -9,6 +9,15 @@ import { checkLogin } from './store/actions/auth';
 
 import './App.css';
 
+window.mouseDown = false;
+document.onmousedown = function (event) {
+    window.button = event.button;
+    window.mouseDown = true;
+}
+document.onmouseup = function () {
+    window.mouseDown = false;
+}
+
 function App({ loading, isAuthenticated, checkLogin }) {
     useEffect(() => {
         checkLogin();

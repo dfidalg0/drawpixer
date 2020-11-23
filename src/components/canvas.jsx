@@ -7,7 +7,7 @@ import React, { useRef, useEffect } from 'react'
 // grid.x e grid.y: dimensões
 // grid.colors: vetor com as cores de cada quadradinho
 
-function Canvas({ grid }) {
+function Canvas({ grid, style, className }) {
 
     const canvasRef = useRef(null);
 
@@ -53,7 +53,7 @@ function Canvas({ grid }) {
         }
     }, [grid])
 
-    return <canvas ref={canvasRef} />
+    return <canvas ref={canvasRef} style={style} className={className} />
 }
 
 export default Canvas

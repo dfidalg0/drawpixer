@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import {
     makeStyles,
     Grid, CircularProgress,
@@ -7,19 +7,41 @@ import {
     GridListTile, GridList, GridListTileBar
 } from '@material-ui/core';
 
-import SearchIcon from '@material-ui/icons/Search';
-import InfoIcon from '@material-ui/icons/Info';
+import {
+    Search as SearchIcon,
+    OpenInBrowser as OpenIcon
+} from '@material-ui/icons';
+
 import Canvas from './canvas'
-import { getUserDrawings } from '../store/actions/drawings';
+import { fetchUserDrawings } from '../store/actions/drawings';
 
 import { connect } from 'react-redux'
 
+import EditorContext from './context/editor';
+
+import { useState, useCallback, useContext } from 'react';
+
 const useStyles = makeStyles((theme) => ({
+    filterBar: {
+        marginBottom: 10,
+        marginTop: 10
+    },
     list: {
         width: 400,
+        maxWidth: '80vw'
     },
-    fullList: {
-        width: 'auto',
+    gridList: {
+        width: 400,
+        maxWidth: '80vw',
+        height: '100vh'
+    },
+    gridTile: {
+        display: 'flex',
+        alignContent: 'center',
+        justifyContent: 'center',
+        maxWidth: '70vw',
+        maxHeight: 400,
+        marginTop: 30,
     },
     button: {
         display: 'flex',
@@ -34,10 +56,6 @@ const useStyles = makeStyles((theme) => ({
         overflow: 'hidden',
         backgroundColor: theme.palette.background.paper,
     },
-    gridList: {
-        width: 400,
-        height: '100%'
-    },
     icon: {
         color: 'rgba(255, 255, 255, 0.54)',
     },
@@ -47,20 +65,12 @@ const useStyles = makeStyles((theme) => ({
     },
     iconButton: {
         padding: 10,
-    },
-
-    gridTile: {
-        display: 'flex',
-        alignContent: 'center',
-        justifyContent: 'center',
-        marginTop: 30,
-    },
+    }
 }));
 
-function UserPixers({ getUserDrawings }) {
+function UserPixers({ fetchUserDrawings, drawings }) {
     const classes = useStyles();
     const [opened, setOpened] = useState(false);
-    const [draw, setDraw] = useState(null);
     const [search, setSearch] = useState('');
 
     const toggleDrawer = useCallback(open => e => {
@@ -68,29 +78,34 @@ function UserPixers({ getUserDrawings }) {
             return;
         }
         setOpened(open);
-        if (open && !draw) {
-            getUserDrawings().then(drawings => { setDraw(drawings); });
+        if (open && !drawings) {
+            fetchUserDrawings();
         }
 
-    }, [draw, getUserDrawings]);
+    }, [drawings, fetchUserDrawings]);
 
+    const { setImg } = useContext(EditorContext);
 
-    const drawings = useCallback(() => draw ? (
+    const drawingsList = useCallback(() => drawings ? (
         search ?
-            draw.filter(
+            drawings.filter(
                 d => d.title.toLowerCase().includes(search.toLowerCase())
             ) :
-            draw
-        ).map((tile, index) =>
+            drawings
+        ).map((draw, index) =>
             <GridListTile className={classes.gridTile} key={index}>
-                <div style={{ justifyContent: 'center' }}>
-                    <Canvas grid={tile.grid} />
-                </div>
-                <GridListTileBar className={classes.tileBar}
-                    title={tile.title}
+                <Canvas grid={draw.grid} style={{
+                    maxWidth: '70vw'
+                }} />
+                <GridListTileBar
+                    title={draw.title}
                     actionIcon={
-                        <IconButton aria-label={`info about ${tile.title}`} className={classes.icon}>
-                            <InfoIcon />
+                        <IconButton
+                            className={classes.icon}
+                            onClick={() => setImg(draw.grid)}
+                            aria-label={`open ${draw.title} in editor`}
+                        >
+                            <OpenIcon />
                         </IconButton>
                     }
                 />
@@ -99,46 +114,53 @@ function UserPixers({ getUserDrawings }) {
         <Grid container justify="center" alignContent="center" alignItems="center">
             <CircularProgress/>
         </Grid>,
-        [classes, draw, search]
+        [classes, drawings, search, setImg]
     );
 
     return (
         <div>
             <Button onClick={toggleDrawer(true)} className={classes.button} size='large'>Meus Desenhos</Button>
-            <Drawer anchor={'right'} open={opened} onClose={toggleDrawer(false)}>
-                <div
-                    role="presentation"
-                    // onClick={toggleDrawer(false)}
-                    // onKeyDown={toggleDrawer(false)}
-                >
-                    <div className={classes.root}>
-
+            <Drawer anchor="left" open={opened} onClose={toggleDrawer(false)}>
+                <div className={classes.root}>
                     <GridList cellHeight={380} className={classes.gridList} cols={1}>
                         <GridListTile key="Subheader" cols={1} style={{ height: 'auto' }}>
-                            <ListSubheader component="div" style={{ fontSize: '16pt' }}>Meus Desenhos</ListSubheader>
+                            <ListSubheader component="div" style={{ fontSize: '16pt' }}>
+                                Meus Desenhos
+                            </ListSubheader>
                             <Divider />
-                            <Paper component="form" className={classes.root}>
-                                <InputBase
-                                    disabled={!draw}
-                                    value={search}
-                                    onChange={e => setSearch(e.target.value)}
-                                    className={classes.input}
-                                    placeholder="Filtrar"
-                                    inputProps={{ 'aria-label': 'search' }}
-                                />
-                                <IconButton className={classes.iconButton} aria-label="search">
-                                    <SearchIcon />
-                                </IconButton>
-                            </Paper>
+                            <Grid container justify="center"
+                                className={classes.filterBar}
+                            >
+                                <Grid item xs={10}>
+                                    <Paper component="form" className={classes.root}>
+                                        <InputBase
+                                            disabled={!drawings}
+                                            value={search}
+                                            onChange={e => setSearch(e.target.value)}
+                                            className={classes.input}
+                                            placeholder="Filtrar"
+                                            inputProps={{ 'aria-label': 'search' }}
+                                        />
+                                        <IconButton className={classes.iconButton} aria-label="search">
+                                            <SearchIcon />
+                                        </IconButton>
+                                    </Paper>
+                                </Grid>
+                            </Grid>
                             <Divider />
                         </GridListTile>
-                        {drawings()}
+                        <Grid container justify="center" style={{
+                            height: '100%'
+                        }}>
+                            {drawingsList()}
+                        </Grid>
                     </GridList>
-                </div>
                 </div>
             </Drawer>
         </div>
     );
 }
 
-export default connect(null, { getUserDrawings })(UserPixers);
+export default connect(state => ({
+    drawings: state.drawings.list
+}), { fetchUserDrawings })(UserPixers);

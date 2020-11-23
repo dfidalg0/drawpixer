@@ -1,6 +1,10 @@
 import React from 'react';
 import { Button, makeStyles } from '@material-ui/core';
 
+import EditorContext from './context/editor';
+
+import { useContext, useCallback } from 'react';
+
 const useStyles = makeStyles(theme => ({
     button: {
         display: 'flex',
@@ -10,41 +14,52 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export default function DownLoadImage({ size }) {
-
+export default function DownLoadImage() {
     const classes = useStyles();
 
-    function downloadImage() {
-        var dimSquare = document.getElementById('square-1').getBoundingClientRect().width;
-        var canvas = document.createElement('canvas');
+    const { size } = useContext(EditorContext);
 
-        var constMult = 1.5;
+    const downloadImage = useCallback(() => {
+        const squares = document.querySelectorAll('button[id^="square-"]');
+
+        const dimSquare = squares[0].getBoundingClientRect().width;
+        const canvas = document.createElement('canvas');
+
+        const constMult = 1.5;
         canvas.width = size[0] * dimSquare * constMult;
         canvas.height = size[1] * dimSquare * constMult;
-        var ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d');
         ctx.strokeStyle = '#999';
         ctx.lineWidth = 0.3;
         ctx.fillStyle = '#999';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        for (var x = 0; x < size[0]; x++) {
-            for (var y = 0; y < size[1]; y++) {
-                var id = size[0] * y + x + 1;
-                var element = document.getElementById(`square-${id}`);
-                ctx.fillStyle = element.style.backgroundColor;
-                ctx.fillRect((x * dimSquare + 0.25) * constMult, (y * dimSquare + 0.25) * constMult, (dimSquare - 0.5) * constMult, (dimSquare - 0.5) * constMult);
-                ctx.strokeRect((x * dimSquare + 0.25) * constMult, (y * dimSquare + 0.25) * constMult, (dimSquare - 0.5) * constMult, (dimSquare - 0.5) * constMult);
+        for (let x = 0; x < size[0]; x++) {
+            for (let y = 0; y < size[1]; y++) {
+                const index = size[0] * y + x;
+                const square = squares[index];
+
+                const args = [
+                    (x * dimSquare + 0.25) * constMult,
+                    (y * dimSquare + 0.25) * constMult,
+                    (dimSquare - 0.5) * constMult,
+                    (dimSquare - 0.5) * constMult
+                ]
+
+                ctx.fillStyle = square.style.backgroundColor;
+                ctx.fillRect(...args);
+                ctx.strokeRect(...args);
             }
         }
-        var imgURL = canvas.toDataURL('image/png', 1.0);
-        var link = document.createElement('a');
+        const imgURL = canvas.toDataURL('image/png', 1.0);
+        const link = document.createElement('a');
         link.download = 'pixelArt.png';
         link.href = imgURL;
 
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-    }
+    }, [size]);
 
     return (
         <Button
@@ -52,7 +67,7 @@ export default function DownLoadImage({ size }) {
             onClick={downloadImage} size="large"
             className={classes.button}
         >
-            Baixar Imagem
+            Exportar Como PNG
         </Button>
     );
 }

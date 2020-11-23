@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import {
     Button, TextField, Dialog, DialogActions,
-    DialogContent, DialogTitle
+    DialogContent, DialogTitle, CircularProgress
 } from '@material-ui/core';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -14,32 +14,22 @@ import DownloadImage from '../components/downloadImage';
 import EditorContext from './context/editor';
 
 // Hooks
-import { useState, useEffect, useCallback, useContext } from 'react';
+import { useState, useCallback, useContext } from 'react';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
     button: {
         display: 'flex',
         width: '100%',
-        backgroundColor: '#073D3D',
-        marginTop: 15
+        backgroundColor: '#073D3D'
     }
-}));
+});
 
 function SaveImage({ saveDrawing }) {
     const classes = useStyles();
 
-    const { size, setSize } = useContext(EditorContext);
+    const { size } = useContext(EditorContext);
 
     const [title, setTitle] = useState('');
-    const [open, setOpen] = useState(false);
-
-    const handleClickOpen = useCallback(() => {
-        setOpen(true);
-    }, []);
-
-    const handleClose = useCallback(() => {
-        setOpen(false);
-    }, []);
 
     const getGrid = useCallback(() => {
         const [x, y] = size;
@@ -54,16 +44,27 @@ function SaveImage({ saveDrawing }) {
         return { x, y, colors };
     }, [size]);
 
-    const handleSubmit = useCallback(() => {
-        if (title.length > 0) {
-            var grid = getGrid();
-            saveDrawing(title, grid);
-        } else {
-            alert("Título Inválido");
-        }
+    const [open, setOpen] = useState(false);
+
+    const handleClickOpen = useCallback(() => {
+        setOpen(true);
+    }, []);
+
+    const handleClose = useCallback(() => {
+        setOpen(false);
+    }, []);
+
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = useCallback(async () => {
+        setLoading(true);
+        const grid = getGrid();
+        await saveDrawing(title, grid);
+        setLoading(false);
+        setOpen(false);
     }, [title, getGrid, saveDrawing]);
 
-    const onChange = e => setTitle(e.target.value);
+    const onChange = useCallback(e => setTitle(e.target.value), []);
 
     function rgb2hex(rgb) {
         if (rgb.search("rgb") === -1) {
@@ -77,34 +78,20 @@ function SaveImage({ saveDrawing }) {
         }
     }
 
-    // function saveLocalStorage() {
-    //     // save grid to local storage
-    //     var grid = getJsonDrawing();
-    //     window.localStorage.setItem("currimage", grid);
-    // }
+    const saveToLocalStorage = useCallback(() => {
+        const grid = getGrid();
+        localStorage.setItem('currimage', JSON.stringify(grid));
+    }, [getGrid]);
 
-    const [img, setImg] = useState(null);
+    const { setImg } = useContext(EditorContext);
 
-    useEffect(() => {
-        if (img){
-            setSize([img.x, img.y]);
-
-            for (var id = 1; id <= img.x * img.y; id++) {
-                const square = document.getElementById(`square-${id}`);
-                square.style.backgroundColor = img.colors[id - 1];
-            }
-
-            setImg(null);
-        }
-    }, [img, setSize]);
-
-    const loadImage = useCallback(() => {
+    const loadFromLocalStorage = useCallback(() => {
         const item = window.localStorage.getItem("currimage");
         if (!item) alert("Não há imagem salva!");
         else {
             setImg(JSON.parse(item));
         }
-    }, []);
+    }, [setImg]);
 
     return (
         <>
@@ -112,6 +99,7 @@ function SaveImage({ saveDrawing }) {
                 <DialogTitle id="form-dialog-title">Salvar</DialogTitle>
                 <DialogContent>
                     <TextField
+                        autoComplete="off"
                         autoFocus
                         margin="dense"
                         id="titulo"
@@ -124,8 +112,10 @@ function SaveImage({ saveDrawing }) {
                     <Button onClick={handleClose} color="primary">
                         Cancelar
                     </Button>
-                    <Button onClick={handleSubmit} color="primary">
-                        Salvar
+                    <Button onClick={handleSubmit} color="primary"
+                        disabled={title.length < 1}
+                    >
+                        { loading? <CircularProgress size={18}/> : 'Salvar'  }
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -135,16 +125,29 @@ function SaveImage({ saveDrawing }) {
                 onClick={handleClickOpen} size="large"
                 className={classes.button}
             >
-                Salvar Imagem
+                Salvar Pixer
             </Button>
-                <DownloadImage size={size} />
-                <Button
-                    variant="contained" color="primary"
-                    onClick={loadImage} size="large"
-                    className={classes.button}
-                >
-                    Carregar Imagem Salva
+            <Button
+                variant="contained" color="primary"
+                onClick={saveToLocalStorage} size="large"
+                className={classes.button}
+                style={{
+                    marginTop: 15
+                }}
+            >
+                Salvar Rascunho
             </Button>
+            <Button
+                variant="contained" color="primary"
+                onClick={loadFromLocalStorage} size="large"
+                className={classes.button}
+                style={{
+                    marginTop: 15
+                }}
+            >
+                Carregar Rascunho
+            </Button>
+            <DownloadImage />
         </>
     );
 }

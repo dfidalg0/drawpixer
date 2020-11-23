@@ -2,8 +2,8 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 
 // Rotas
-import authRoutes from './routes/auth';
-import drawRoutes from './routes/drawings';
+import authRoutes from '../lib/routes/auth';
+import drawRoutes from '../lib/routes/drawings';
 
 const app = express();
 
