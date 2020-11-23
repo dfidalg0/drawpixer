@@ -25,15 +25,16 @@ export default function Square({ size, squareId }) {
         }
     }, [setClicks, setUndos, squareId]);
 
-    let width, height;
+    let height, width, minHeight, minWidth;
 
-    height = width = size ? size : 34;
+    minHeight = minWidth = height = width = size ? size : 34;
 
     return (
         <button id={`square-${squareId}`} className={classes.square}
             ref={self}
             style={{
-                backgroundColor: "#ffffff", height, width
+                backgroundColor: "#ffffff",
+                height, width, minHeight, minWidth
             }}
             draggable={false}
             onMouseOver={() => {

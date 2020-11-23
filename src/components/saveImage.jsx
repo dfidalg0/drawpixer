@@ -14,7 +14,7 @@ import DownloadImage from '../components/downloadImage';
 import EditorContext from './context/editor';
 
 import { rgb2hex } from '../utils/tools';
-import { getSquares } from '../utils/dom-helpers';
+import { getAllSquares } from '../utils/dom-helpers';
 
 // Hooks
 import { useState, useCallback, useContext } from 'react';
@@ -38,7 +38,7 @@ function SaveImage({ saveDrawing }) {
         const [x, y] = size;
         const colors = [];
 
-        const squares = getSquares();
+        const squares = getAllSquares();
 
         for (const square of squares) {
             const color = rgb2hex(square.style.backgroundColor);

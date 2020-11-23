@@ -6,7 +6,7 @@ import {
 
 import { makeStyles } from '@material-ui/core/styles';
 
-import { getSquares } from '../utils/dom-helpers';
+import { getAllSquares } from '../utils/dom-helpers';
 
 import ColorPicker from './colorpicker';
 import LeftBar from './left-bar';
@@ -36,7 +36,8 @@ const useStyles = makeStyles({
     editorGrid: {
         justifyContent: 'center',
         backgroundColor: '#282c34',
-        padding: '20px'
+        padding: '20px',
+        paddingBottom: '0px'
     }
 });
 
@@ -93,7 +94,7 @@ export default function Editor(){
 
     useEffect(() => {
         if (paint){
-            const squares = getSquares();
+            const squares = getAllSquares();
 
             for (let i = 0; i < squares.length; ++i) {
                 const square = squares[i];

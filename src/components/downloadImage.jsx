@@ -3,7 +3,7 @@ import { Button, makeStyles } from '@material-ui/core';
 
 import EditorContext from './context/editor';
 
-import { getSquares } from '../utils/dom-helpers';
+import { getAllSquares } from '../utils/dom-helpers';
 
 import { useContext, useCallback } from 'react';
 
@@ -22,7 +22,7 @@ export default function DownLoadImage() {
     const { size } = useContext(EditorContext);
 
     const downloadImage = useCallback(() => {
-        const squares = getSquares();
+        const squares = getAllSquares();
 
         const dimSquare = squares[0].getBoundingClientRect().width;
         const canvas = document.createElement('canvas');

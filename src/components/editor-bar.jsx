@@ -8,6 +8,8 @@ import {
     Undo, Redo, Palette
 } from '@material-ui/icons';
 
+import { getSquare } from '../utils/dom-helpers';
+
 import EditorContext from './context/editor';
 
 import { useContext, useMemo, useCallback } from 'react';
@@ -32,7 +34,7 @@ export default function EditorBar({ onPalette }) {
         setClicks(prevClicks => {
             const { id, color } = prevClicks.pop();
 
-            const button = document.getElementById(`square-${id}`);
+            const button = getSquare(id);
 
             const lastColor = button.style.backgroundColor;
 
@@ -47,7 +49,7 @@ export default function EditorBar({ onPalette }) {
         setUndos(prevUndos => {
             const { id, color } = prevUndos.pop();
 
-            const button = document.getElementById(`square-${id}`);
+            const button = getSquare(id);
 
             const lastColor = button.style.backgroundColor;
 

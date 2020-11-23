@@ -4,14 +4,21 @@ import Square from './square';
 
 import classes from '../styles/grid.module.css';
 
-import { useEffect, useMemo } from 'react';
+import { getMaxSizes } from '../utils/dom-helpers';
 
-const maxSize = Math.min(
-    window.innerHeight - 40 - 45 - 48, // height - padding - appbar - editorbar
-    window.innerWidth - 40 // width - padding
-);
+import { useState, useEffect, useMemo } from 'react';
 
 export default function Matrix({ size, onSizeChange }) {
+    const [maxSize, setMaxSize] = useState(getMaxSizes());
+
+    useEffect(() => {
+        const handler = () => setMaxSize(getMaxSizes());
+
+        window.addEventListener('resize', handler);
+
+        return () => window.removeEventListener('resize', handler);
+    }, []);
+
     useEffect(() => {
         if(onSizeChange) onSizeChange();
     }, [size, onSizeChange]);
@@ -24,15 +31,16 @@ export default function Matrix({ size, onSizeChange }) {
     }, [size]);
 
     const squareSize = useMemo(() => {
-        let squareSize;
+        const possibleSizes = [34];
 
-        if (dim[0] > maxSize && dim[0] >= dim[1])
-            squareSize = 1 + maxSize / size[0];
-        if (dim[1] > maxSize && dim[1] >= dim[0])
-            squareSize = 1 + maxSize / size[1];
+        if (dim[0] > maxSize[0])
+            possibleSizes.push(1 + maxSize[0] / size[0]);
 
-        return squareSize;
-    }, [size, dim]);
+        if (dim[1] > maxSize[1])
+            possibleSizes.push(1 + maxSize[1] / size[1]);
+
+        return Math.min(...possibleSizes);
+    }, [size, dim, maxSize]);
 
     const matrix = useMemo(() => {
         let matrix = [];

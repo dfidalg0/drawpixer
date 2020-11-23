@@ -2,6 +2,7 @@
     background: #fff;
     border: 1px solid #999;
     margin: -0.5px;
+    padding: 0px;
 }
 
 .square:focus {
