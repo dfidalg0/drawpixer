@@ -107,9 +107,12 @@ export default function Editor(){
     const editorSizeFormChangeHandler = useCallback(event => {
         let { name, value } = event.target;
 
-        value = Number(value);
-
-        if (value <= 0 || value > 50) return;
+        if (value){
+            value = Number(value);
+            if (value < 0 || value > 75) return;
+        }
+        else
+            value = '';
 
         setSize(size =>
             name === 'X' ?
