@@ -1,7 +1,8 @@
 import {
     SET_DRAWINGS,
     CLEAR_DRAWINGS,
-    PUSH_DRAWING
+    PUSH_DRAWING,
+    DELETE_DRAWING
 } from './types';
 
 import axios from 'axios';
@@ -19,6 +20,25 @@ export const pushDrawing = (drawing) => ({
     type: PUSH_DRAWING,
     drawing
 })
+
+export const deleteDrawing = (id) => ({
+    type: DELETE_DRAWING,
+    id
+})
+
+export const deleteUserDraw = (id) => async (dispatch, getState) => {
+    var state = getState();
+    const { token } = state.auth;
+
+
+    const res = await axios.delete('api/drawing/delete/' + id, {
+        headers: {
+            Authorization: token
+        }
+    });
+    dispatch(deleteDrawing(id));
+    alert(res.data.message);
+}
 
 export const saveDrawing = (title, grid) => async (dispatch, getState) => {
     var state = getState();
@@ -55,7 +75,7 @@ export const fetchUserDrawings = () => async (dispatch, getState) => {
             }
         });
 
-        drawings.sort((a,b) => a.created_at >= b.created_at ? -1 : 1);
+        drawings.sort((a, b) => a.created_at >= b.created_at ? -1 : 1);
 
         dispatch(setDrawings(drawings));
     }

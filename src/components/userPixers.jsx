@@ -9,11 +9,12 @@ import {
 
 import {
     Search as SearchIcon,
-    OpenInBrowser as OpenIcon
+    OpenInBrowser as OpenIcon,
+    DeleteOutline as DeleteIcon
 } from '@material-ui/icons';
 
 import Canvas from './canvas'
-import { fetchUserDrawings } from '../store/actions/drawings';
+import { fetchUserDrawings, deleteUserDraw } from '../store/actions/drawings';
 
 import { connect } from 'react-redux'
 
@@ -68,10 +69,17 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function UserPixers({ fetchUserDrawings, drawings }) {
+function UserPixers({ fetchUserDrawings, drawings, deleteUserDraw }) {
     const classes = useStyles();
     const [opened, setOpened] = useState(false);
     const [search, setSearch] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const deleteDraw = useCallback(async id => {
+        setLoading(true);
+        await deleteUserDraw(id);
+        setLoading(false);
+    }, [deleteUserDraw, setLoading]);
 
     const toggleDrawer = useCallback(open => e => {
         if (e.type === 'keydown' && ['Tab', 'Shift'].includes(e.key)) {
@@ -92,14 +100,15 @@ function UserPixers({ fetchUserDrawings, drawings }) {
                 d => d.title.toLowerCase().includes(search.toLowerCase())
             ) :
             drawings
-        ).map((draw, index) =>
-            <GridListTile className={classes.gridTile} key={index}>
-                <Canvas grid={draw.grid} style={{
-                    maxWidth: '70vw'
-                }} />
-                <GridListTileBar
-                    title={draw.title}
-                    actionIcon={
+    ).map((draw, index) =>
+        <GridListTile className={classes.gridTile} key={index}>
+            <Canvas grid={draw.grid} style={{
+                maxWidth: '70vw'
+            }} />
+            <GridListTileBar
+                title={draw.title}
+                actionIcon={
+                    <div>
                         <IconButton
                             className={classes.icon}
                             onClick={() => setImg(draw.grid)}
@@ -107,14 +116,20 @@ function UserPixers({ fetchUserDrawings, drawings }) {
                         >
                             <OpenIcon />
                         </IconButton>
-                    }
-                />
-            </GridListTile>
-        ) :
+
+                        <IconButton onClick={() => deleteDraw(draw._id)}>
+                        { loading? <CircularProgress size={18}/> : <DeleteIcon />  }
+                        
+                        </IconButton>
+                    </div>
+                }
+            />
+        </GridListTile>
+    ) :
         <Grid container justify="center" alignContent="center" alignItems="center">
-            <CircularProgress/>
+            <CircularProgress />
         </Grid>,
-        [classes, drawings, search, setImg]
+        [classes, drawings, search, setImg, deleteDraw, loading]
     );
 
     return (
@@ -163,4 +178,4 @@ function UserPixers({ fetchUserDrawings, drawings }) {
 
 export default connect(state => ({
     drawings: state.drawings.list
-}), { fetchUserDrawings })(UserPixers);
+}), { fetchUserDrawings, deleteUserDraw })(UserPixers);
