@@ -148,13 +148,13 @@ function CommunityPixers({ getCommunityDrawings, drawings, all, updateMode }) {
                             <Divider />
                         </GridListTile>
                         <GridList cols={2} justify="center" style={{
-                            height: '85%',
+                            height: '80%',
                             width: '95%',
                             marginLeft: '2%'
                         }}>
                             {drawingsList()}
                         </GridList>
-                        {all ? null : <Button onClick={getCommunityDrawings} style={{ height: 60 }}>Carregar Mais</Button>}
+                        {all ? null : drawings? <Button onClick={getCommunityDrawings} style={{ height: 60 }}>Carregar Mais</Button> : null }
 
                     </GridList>
                 </div>

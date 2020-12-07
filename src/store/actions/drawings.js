@@ -64,7 +64,7 @@ export const deleteUserDraw = (id) => async (dispatch, getState) => {
 export const getCommunityDrawings = () => async (dispatch, getState) => {
     var state = getState();
     const { token } = state.auth;
-    const min = state.community.max + 1;
+    const min = state.community.max;
     try {
         const { data: drawings } = await axios.get('/api/drawings/community/' + min, {
             headers: {

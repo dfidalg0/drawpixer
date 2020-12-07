@@ -26,7 +26,8 @@ const useStyles = makeStyles(() => ({
         justifyContent: 'center',
         maxWidth: '70vw',
         maxHeight: 400,
-        marginTop: 30,
+        marginTop: 15,
+        marginBottom: 15
     },
     input: {
         marginLeft: 25,

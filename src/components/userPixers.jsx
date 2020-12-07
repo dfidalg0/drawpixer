@@ -131,7 +131,8 @@ function UserPixers({ fetchUserDrawings, drawings }) {
                             <Divider />
                         </GridListTile>
                         <Grid container justify="center" style={{
-                            height: '100%'
+                            height: '85%',
+                            marginTop: -30,
                         }}>
                             {drawingsList()}
                         </Grid>
