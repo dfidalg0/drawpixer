@@ -14,7 +14,7 @@ import {
 } from '@material-ui/icons';
 
 import Canvas from './canvas'
-import { fetchUserDrawings, deleteUserDraw } from '../store/actions/drawings';
+import { fetchUserDrawings, deleteUserDraw, updateMode } from '../store/actions/drawings';
 
 import { connect } from 'react-redux'
 
@@ -69,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function UserPixers({ fetchUserDrawings, drawings, deleteUserDraw }) {
+function UserPixers({ fetchUserDrawings, drawings, deleteUserDraw, updateMode }) {
     const classes = useStyles();
     const [opened, setOpened] = useState(false);
     const [search, setSearch] = useState('');
@@ -111,7 +111,7 @@ function UserPixers({ fetchUserDrawings, drawings, deleteUserDraw }) {
                     <div>
                         <IconButton
                             className={classes.icon}
-                            onClick={() => setImg(draw.grid)}
+                            onClick={() => {updateMode(draw.title); setImg(draw.grid)}}
                             aria-label={`open ${draw.title} in editor`}
                         >
                             <OpenIcon />
@@ -129,7 +129,7 @@ function UserPixers({ fetchUserDrawings, drawings, deleteUserDraw }) {
         <Grid container justify="center" alignContent="center" alignItems="center">
             <CircularProgress />
         </Grid>,
-        [classes, drawings, search, setImg, deleteDraw, loading]
+        [classes, drawings, search, setImg, deleteDraw, loading, updateMode]
     );
 
     return (
@@ -178,4 +178,4 @@ function UserPixers({ fetchUserDrawings, drawings, deleteUserDraw }) {
 
 export default connect(state => ({
     drawings: state.drawings.list
-}), { fetchUserDrawings, deleteUserDraw })(UserPixers);
+}), { fetchUserDrawings, deleteUserDraw, updateMode })(UserPixers);

@@ -8,7 +8,7 @@ import {
 
 import { makeStyles } from '@material-ui/core/styles';
 
-import { saveDrawing } from '../store/actions/drawings';
+import { saveDrawing, updateDrawing } from '../store/actions/drawings';
 import DownloadImage from '../components/downloadImage';
 
 import EditorContext from './context/editor';
@@ -27,7 +27,7 @@ const useStyles = makeStyles({
     }
 });
 
-function SaveImage({ saveDrawing }) {
+function SaveImage({ saveDrawing, updateDrawing, edit_title }) {
     const classes = useStyles();
 
     const { size } = useContext(EditorContext);
@@ -66,6 +66,15 @@ function SaveImage({ saveDrawing }) {
         setLoading(false);
         setOpen(false);
     }, [title, getGrid, saveDrawing]);
+
+
+    const handleUpdate = useCallback(async () => {
+        setLoading(true);
+        const grid = getGrid();
+        await updateDrawing(edit_title, grid);
+        setLoading(false);
+    }, [getGrid, updateDrawing, edit_title]);
+
 
     const onChange = useCallback(e => setTitle(e.target.value), []);
 
@@ -106,7 +115,7 @@ function SaveImage({ saveDrawing }) {
                     <Button onClick={handleSubmit} color="primary"
                         disabled={title.length < 1}
                     >
-                        { loading? <CircularProgress size={18}/> : 'Salvar'  }
+                        {loading ? <CircularProgress size={18} /> : 'Salvar'}
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -117,6 +126,18 @@ function SaveImage({ saveDrawing }) {
                 className={classes.button}
             >
                 Salvar Pixer
+            </Button>
+
+            <Button
+                variant="contained" color="primary"
+                onClick={handleUpdate} size="large"
+                className={classes.button}
+                disabled={edit_title === undefined}
+                style={{
+                    marginTop: 15
+                }}
+            >
+                Atualizar Pixer
             </Button>
             <Button
                 variant="contained" color="primary"
@@ -144,4 +165,6 @@ function SaveImage({ saveDrawing }) {
 }
 
 
-export default connect(null, { saveDrawing })(SaveImage);
+export default connect(state => ({
+    edit_title: state.drawings.edit === undefined ? undefined : state.drawings.edit.title,
+}), { saveDrawing, updateDrawing })(SaveImage);

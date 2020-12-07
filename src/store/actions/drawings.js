@@ -2,7 +2,9 @@ import {
     SET_DRAWINGS,
     CLEAR_DRAWINGS,
     PUSH_DRAWING,
-    DELETE_DRAWING
+    DELETE_DRAWING,
+    UPDATE_DRAWING,
+    UPDATE_MODE,
 } from './types';
 
 import axios from 'axios';
@@ -25,6 +27,19 @@ export const deleteDrawing = (id) => ({
     type: DELETE_DRAWING,
     id
 })
+
+export const updateDraw = (title, grid) => ({
+    type: UPDATE_DRAWING,
+    title,
+    grid
+})
+
+export const updateMode = (title) => async (dispatch) => {
+    dispatch({
+        type: UPDATE_MODE,
+        title
+    })   
+}
 
 export const deleteUserDraw = (id) => async (dispatch, getState) => {
     var state = getState();
@@ -59,6 +74,27 @@ export const saveDrawing = (title, grid) => async (dispatch, getState) => {
                 name: user.name
             }
         }));
+    }
+    catch ({ response: { data } }) {
+        alert(data.message);
+    }
+};
+
+export const updateDrawing = (title, grid) => async (dispatch, getState) => {
+    var state = getState();
+    const { token } = state.auth;
+    try {
+        const { data } = await axios.post('/api/drawings/update', {
+            title: title,
+            grid: grid,
+        }, {
+            headers: {
+                Authorization: token
+            }
+        });
+
+        dispatch(updateDraw(title, grid));
+        alert(data.message);
     }
     catch ({ response: { data } }) {
         alert(data.message);
