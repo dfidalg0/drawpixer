@@ -10,11 +10,10 @@ import {
 import {
     Search as SearchIcon,
     OpenInBrowser as OpenIcon,
-    DeleteOutline as DeleteIcon
 } from '@material-ui/icons';
 
 import Canvas from './canvas'
-import { fetchUserDrawings, deleteUserDraw, updateMode } from '../store/actions/drawings';
+import { getCommunityDrawings } from '../store/actions/drawings';
 
 import { connect } from 'react-redux'
 
@@ -28,11 +27,11 @@ const useStyles = makeStyles((theme) => ({
         marginTop: 10
     },
     list: {
-        width: 400,
+        width: 500,
         maxWidth: '80vw'
     },
     gridList: {
-        width: 400,
+        width: 500,
         maxWidth: '80vw',
         height: '100vh'
     },
@@ -40,15 +39,14 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         alignContent: 'center',
         justifyContent: 'center',
-        maxWidth: '70vw',
-        maxHeight: 400,
         marginTop: 30,
     },
     button: {
         display: 'flex',
         width: '100%',
         marginBottom: 15,
-        backgroundColor: '#067A8A',
+        backgroundColor: '#073D5F',
+        color: 'white',
     },
     root: {
         display: 'flex',
@@ -69,17 +67,10 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function UserPixers({ fetchUserDrawings, drawings, deleteUserDraw, updateMode }) {
+function CommunityPixers({ getCommunityDrawings, drawings, all }) {
     const classes = useStyles();
     const [opened, setOpened] = useState(false);
     const [search, setSearch] = useState('');
-    const [loading, setLoading] = useState(false);
-
-    const deleteDraw = useCallback(async id => {
-        setLoading(true);
-        await deleteUserDraw(id);
-        setLoading(false);
-    }, [deleteUserDraw, setLoading]);
 
     const toggleDrawer = useCallback(open => e => {
         if (e.type === 'keydown' && ['Tab', 'Shift'].includes(e.key)) {
@@ -87,10 +78,10 @@ function UserPixers({ fetchUserDrawings, drawings, deleteUserDraw, updateMode })
         }
         setOpened(open);
         if (open && !drawings) {
-            fetchUserDrawings();
+            getCommunityDrawings();
         }
 
-    }, [drawings, fetchUserDrawings]);
+    }, [drawings, getCommunityDrawings]);
 
     const { setImg } = useContext(EditorContext);
 
@@ -101,46 +92,38 @@ function UserPixers({ fetchUserDrawings, drawings, deleteUserDraw, updateMode })
             ) :
             drawings
     ).map((draw, index) =>
-        <GridListTile className={classes.gridTile} key={index}>
-            <Canvas grid={draw.grid} style={{
-                maxWidth: '70vw'
-            }} size={330} />
+        <GridListTile className={classes.gridTile} key={index} style={{ minHeight: 250 }}>
+            <Canvas grid={draw.grid} size={200} />
             <GridListTileBar
                 title={draw.title}
+                subtitle={<span>Autor: {draw.user ? draw.user.name : 'Desconhecido'}</span>}
                 actionIcon={
-                    <div>
-                        <IconButton
-                            className={classes.icon}
-                            onClick={() => {updateMode(draw.title); setImg(draw.grid)}}
-                            aria-label={`open ${draw.title} in editor`}
-                        >
-                            <OpenIcon />
-                        </IconButton>
-
-                        <IconButton className={classes.icon} onClick={() => deleteDraw(draw._id)}>
-                        { loading? <CircularProgress size={18}/> : <DeleteIcon />  }
-                        
-                        </IconButton>
-                    </div>
+                    <IconButton
+                        className={classes.icon}
+                        onClick={() => setImg(draw.grid)}
+                        aria-label={`open ${draw.title} in editor`}
+                    >
+                        <OpenIcon />
+                    </IconButton>
                 }
             />
         </GridListTile>
     ) :
-        <Grid container justify="center" alignContent="center" alignItems="center">
+        <Grid container justify="center" alignContent="center" alignItems="center" style={{ width: 600 }}>
             <CircularProgress />
         </Grid>,
-        [classes, drawings, search, setImg, deleteDraw, loading, updateMode]
+        [classes, drawings, search, setImg]
     );
 
     return (
         <div>
-            <Button onClick={toggleDrawer(true)} className={classes.button} size='large'>Meus Desenhos</Button>
+            <Button onClick={toggleDrawer(true)} className={classes.button} size='large'>Desenhos</Button>
             <Drawer anchor="left" open={opened} onClose={toggleDrawer(false)}>
                 <div className={classes.root}>
-                    <GridList cellHeight={380} className={classes.gridList} cols={1}>
+                    <GridList className={classes.gridList} cols={1}>
                         <GridListTile key="Subheader" cols={1} style={{ height: 'auto' }}>
                             <ListSubheader component="div" style={{ fontSize: '16pt' }}>
-                                Meus Desenhos
+                                Desenhos
                             </ListSubheader>
                             <Divider />
                             <Grid container justify="center"
@@ -164,11 +147,15 @@ function UserPixers({ fetchUserDrawings, drawings, deleteUserDraw, updateMode })
                             </Grid>
                             <Divider />
                         </GridListTile>
-                        <Grid container justify="center" style={{
-                            height: '100%'
+                        <GridList cols={2} justify="center" style={{
+                            height: '85%',
+                            width: '95%',
+                            marginLeft: '2%'
                         }}>
                             {drawingsList()}
-                        </Grid>
+                        </GridList>
+                        {all ? null : <Button onClick={getCommunityDrawings} style={{ height: 60 }}>Carregar Mais</Button>}
+
                     </GridList>
                 </div>
             </Drawer>
@@ -177,5 +164,6 @@ function UserPixers({ fetchUserDrawings, drawings, deleteUserDraw, updateMode })
 }
 
 export default connect(state => ({
-    drawings: state.drawings.list
-}), { fetchUserDrawings, deleteUserDraw, updateMode })(UserPixers);
+    drawings: state.community.list,
+    all: state.community.all,
+}), { getCommunityDrawings })(CommunityPixers);

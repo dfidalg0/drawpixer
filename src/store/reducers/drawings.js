@@ -4,7 +4,7 @@ import {
     PUSH_DRAWING,
     DELETE_DRAWING,
     UPDATE_MODE,
-    UPDATE_DRAWING
+    UPDATE_DRAWING,
 } from '../actions/types';
 
 const baseState = {
@@ -19,7 +19,7 @@ export default function reducer(state = baseState, action) {
             return { ...state, list: null };
         case PUSH_DRAWING:
             return state.list ?
-                { ...state, list: [action.drawing, ...state.list] } :
+                { ...state, list: [action.drawing, ...state.list]} :
                 state;
         case DELETE_DRAWING:
             const newDrawings = state.list.filter(draw => draw._id !== action.id);

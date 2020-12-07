@@ -5,6 +5,7 @@ import {
     DELETE_DRAWING,
     UPDATE_DRAWING,
     UPDATE_MODE,
+    SET_COMMUNITY_DRAWINGS,
 } from './types';
 
 import axios from 'axios';
@@ -38,8 +39,13 @@ export const updateMode = (title) => async (dispatch) => {
     dispatch({
         type: UPDATE_MODE,
         title
-    })   
+    })
 }
+
+export const setCommunityDrawings = (drawings) => ({
+    type: SET_COMMUNITY_DRAWINGS,
+    drawings
+});
 
 export const deleteUserDraw = (id) => async (dispatch, getState) => {
     var state = getState();
@@ -53,6 +59,25 @@ export const deleteUserDraw = (id) => async (dispatch, getState) => {
     });
     dispatch(deleteDrawing(id));
     alert(res.data.message);
+}
+
+export const getCommunityDrawings = () => async (dispatch, getState) => {
+    var state = getState();
+    const { token } = state.auth;
+    const min = state.community.max + 1;
+    try {
+        const { data: drawings } = await axios.get('/api/drawings/community/' + min, {
+            headers: {
+                Authorization: token
+            }
+        });
+
+        drawings.sort((a, b) => a.created_at >= b.created_at ? -1 : 1);
+        dispatch(setCommunityDrawings(drawings));
+    }
+    catch ({ response: { data } }) {
+        alert('Erro: ' + data.message);
+    }
 }
 
 export const saveDrawing = (title, grid) => async (dispatch, getState) => {
