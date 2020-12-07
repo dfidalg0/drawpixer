@@ -4,23 +4,20 @@ import {
     Grid, CircularProgress,
     Drawer, Button, Paper, InputBase,
     Divider, IconButton, ListSubheader,
-    GridListTile, GridList, GridListTileBar
+    GridListTile, GridList,
 } from '@material-ui/core';
 
 import {
     Search as SearchIcon,
-    OpenInBrowser as OpenIcon,
-    DeleteOutline as DeleteIcon
 } from '@material-ui/icons';
 
-import Canvas from './canvas'
-import { fetchUserDrawings, deleteUserDraw, updateMode } from '../store/actions/drawings';
+import { fetchUserDrawings } from '../store/actions/drawings';
 
 import { connect } from 'react-redux'
 
-import EditorContext from './context/editor';
+import DrawMural from './drawMural';
 
-import { useState, useCallback, useContext } from 'react';
+import { useState, useCallback } from 'react';
 
 const useStyles = makeStyles((theme) => ({
     filterBar: {
@@ -69,17 +66,10 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function UserPixers({ fetchUserDrawings, drawings, deleteUserDraw, updateMode }) {
+function UserPixers({ fetchUserDrawings, drawings }) {
     const classes = useStyles();
     const [opened, setOpened] = useState(false);
     const [search, setSearch] = useState('');
-    const [loading, setLoading] = useState(false);
-
-    const deleteDraw = useCallback(async id => {
-        setLoading(true);
-        await deleteUserDraw(id);
-        setLoading(false);
-    }, [deleteUserDraw, setLoading]);
 
     const toggleDrawer = useCallback(open => e => {
         if (e.type === 'keydown' && ['Tab', 'Shift'].includes(e.key)) {
@@ -92,7 +82,6 @@ function UserPixers({ fetchUserDrawings, drawings, deleteUserDraw, updateMode })
 
     }, [drawings, fetchUserDrawings]);
 
-    const { setImg } = useContext(EditorContext);
 
     const drawingsList = useCallback(() => drawings ? (
         search ?
@@ -101,35 +90,12 @@ function UserPixers({ fetchUserDrawings, drawings, deleteUserDraw, updateMode })
             ) :
             drawings
     ).map((draw, index) =>
-        <GridListTile className={classes.gridTile} key={index}>
-            <Canvas grid={draw.grid} style={{
-                maxWidth: '70vw'
-            }} size={330} />
-            <GridListTileBar
-                title={draw.title}
-                actionIcon={
-                    <div>
-                        <IconButton
-                            className={classes.icon}
-                            onClick={() => {updateMode(draw._id); setImg(draw.grid)}}
-                            aria-label={`open ${draw.title} in editor`}
-                        >
-                            <OpenIcon />
-                        </IconButton>
-
-                        <IconButton className={classes.icon} onClick={() => deleteDraw(draw._id)}>
-                        { loading? <CircularProgress size={18}/> : <DeleteIcon />  }
-                        
-                        </IconButton>
-                    </div>
-                }
-            />
-        </GridListTile>
+        <DrawMural draw={draw} key={index} />
     ) :
         <Grid container justify="center" alignContent="center" alignItems="center">
             <CircularProgress />
         </Grid>,
-        [classes, drawings, search, setImg, deleteDraw, loading, updateMode]
+        [drawings, search]
     );
 
     return (
@@ -178,4 +144,4 @@ function UserPixers({ fetchUserDrawings, drawings, deleteUserDraw, updateMode })
 
 export default connect(state => ({
     drawings: state.drawings.list
-}), { fetchUserDrawings, deleteUserDraw, updateMode })(UserPixers);
+}), { fetchUserDrawings })(UserPixers);

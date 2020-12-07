@@ -51,7 +51,7 @@ function Canvas({ grid, style, className, size }) {
                 ctx.strokeRect((x * dimSquare + 0.25) + iniX, (y * dimSquare + 0.25) + iniY, (dimSquare - 0.5), (dimSquare - 0.5));
             }
         }
-    }, [grid])
+    }, [grid, size])
 
     return <canvas ref={canvasRef} style={style} className={className} />
 }
