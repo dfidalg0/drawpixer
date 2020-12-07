@@ -13,7 +13,7 @@ import {
 } from '@material-ui/icons';
 
 import Canvas from './canvas'
-import { getCommunityDrawings } from '../store/actions/drawings';
+import { getCommunityDrawings, updateMode } from '../store/actions/drawings';
 
 import { connect } from 'react-redux'
 
@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function CommunityPixers({ getCommunityDrawings, drawings, all }) {
+function CommunityPixers({ getCommunityDrawings, drawings, all, updateMode }) {
     const classes = useStyles();
     const [opened, setOpened] = useState(false);
     const [search, setSearch] = useState('');
@@ -100,7 +100,7 @@ function CommunityPixers({ getCommunityDrawings, drawings, all }) {
                 actionIcon={
                     <IconButton
                         className={classes.icon}
-                        onClick={() => setImg(draw.grid)}
+                        onClick={() => { updateMode(null); setImg(draw.grid)}}
                         aria-label={`open ${draw.title} in editor`}
                     >
                         <OpenIcon />
@@ -112,7 +112,7 @@ function CommunityPixers({ getCommunityDrawings, drawings, all }) {
         <Grid container justify="center" alignContent="center" alignItems="center" style={{ width: 600 }}>
             <CircularProgress />
         </Grid>,
-        [classes, drawings, search, setImg]
+        [classes, drawings, search, setImg, updateMode]
     );
 
     return (
@@ -166,4 +166,4 @@ function CommunityPixers({ getCommunityDrawings, drawings, all }) {
 export default connect(state => ({
     drawings: state.community.list,
     all: state.community.all,
-}), { getCommunityDrawings })(CommunityPixers);
+}), { getCommunityDrawings, updateMode })(CommunityPixers);

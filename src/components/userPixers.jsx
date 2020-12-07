@@ -111,7 +111,7 @@ function UserPixers({ fetchUserDrawings, drawings, deleteUserDraw, updateMode })
                     <div>
                         <IconButton
                             className={classes.icon}
-                            onClick={() => {updateMode(draw.title); setImg(draw.grid)}}
+                            onClick={() => {updateMode(draw._id); setImg(draw.grid)}}
                             aria-label={`open ${draw.title} in editor`}
                         >
                             <OpenIcon />

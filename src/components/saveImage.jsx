@@ -27,7 +27,7 @@ const useStyles = makeStyles({
     }
 });
 
-function SaveImage({ saveDrawing, updateDrawing, edit_title }) {
+function SaveImage({ saveDrawing, updateDrawing, edit_id }) {
     const classes = useStyles();
 
     const { size } = useContext(EditorContext);
@@ -71,9 +71,9 @@ function SaveImage({ saveDrawing, updateDrawing, edit_title }) {
     const handleUpdate = useCallback(async () => {
         setLoading(true);
         const grid = getGrid();
-        await updateDrawing(edit_title, grid);
+        await updateDrawing(edit_id, grid);
         setLoading(false);
-    }, [getGrid, updateDrawing, edit_title]);
+    }, [getGrid, updateDrawing, edit_id]);
 
 
     const onChange = useCallback(e => setTitle(e.target.value), []);
@@ -132,7 +132,7 @@ function SaveImage({ saveDrawing, updateDrawing, edit_title }) {
                 variant="contained" color="primary"
                 onClick={handleUpdate} size="large"
                 className={classes.button}
-                disabled={edit_title === undefined}
+                disabled={edit_id === null}
                 style={{
                     marginTop: 15
                 }}
@@ -166,5 +166,5 @@ function SaveImage({ saveDrawing, updateDrawing, edit_title }) {
 
 
 export default connect(state => ({
-    edit_title: state.drawings.edit === undefined ? undefined : state.drawings.edit.title,
+    edit_id: state.drawings.edit.id,
 }), { saveDrawing, updateDrawing })(SaveImage);

@@ -29,16 +29,16 @@ export const deleteDrawing = (id) => ({
     id
 })
 
-export const updateDraw = (title, grid) => ({
+export const updateDraw = (id, grid) => ({
     type: UPDATE_DRAWING,
-    title,
+    id,
     grid
 })
 
-export const updateMode = (title) => async (dispatch) => {
+export const updateMode = (id) => async (dispatch) => {
     dispatch({
         type: UPDATE_MODE,
-        title
+        id
     })
 }
 
@@ -105,12 +105,12 @@ export const saveDrawing = (title, grid) => async (dispatch, getState) => {
     }
 };
 
-export const updateDrawing = (title, grid) => async (dispatch, getState) => {
+export const updateDrawing = (id, grid) => async (dispatch, getState) => {
     var state = getState();
     const { token } = state.auth;
     try {
         const { data } = await axios.post('/api/drawings/update', {
-            title: title,
+            id: id,
             grid: grid,
         }, {
             headers: {
@@ -118,7 +118,7 @@ export const updateDrawing = (title, grid) => async (dispatch, getState) => {
             }
         });
 
-        dispatch(updateDraw(title, grid));
+        dispatch(updateDraw(id, grid));
         alert(data.message);
     }
     catch ({ response: { data } }) {

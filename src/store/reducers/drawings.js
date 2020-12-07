@@ -8,7 +8,10 @@ import {
 } from '../actions/types';
 
 const baseState = {
-    list: null
+    list: null,
+    edit: {
+        id: null
+    }
 };
 
 export default function reducer(state = baseState, action) {
@@ -25,9 +28,9 @@ export default function reducer(state = baseState, action) {
             const newDrawings = state.list.filter(draw => draw._id !== action.id);
             return { ...state, list: newDrawings };
         case UPDATE_MODE:
-            return {...state, edit: {title: action.title}}
+            return {...state, edit: {id: action.id}}
         case UPDATE_DRAWING:
-            state.list.map(draw => (draw.title === action.title ? draw.grid = action.grid : draw));
+            state.list.map(draw => (draw._id === action.id ? draw.grid = action.grid : draw));
             return state;
         default:
             return state;
