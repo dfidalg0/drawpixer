@@ -17,7 +17,7 @@ import LoginForm from '../components/login-form';
 
 // Redux
 import { googleLogin } from '../store/actions/auth';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 // Hooks
 import { useTheme, useMediaQuery } from '@material-ui/core';
@@ -54,13 +54,15 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-function LoginScreen ({ googleLogin }){
+export default function LoginScreen (){
     const theme = useTheme();
     const classes = useStyles();
 
     // Verifica se o usuário está vendo o site com uma tela
     // de largura menor que "small"
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+    const dispatch = useDispatch();
 
     return <Grid
         className={classes.root}
@@ -115,7 +117,7 @@ function LoginScreen ({ googleLogin }){
                         <GoogleLogin
                             clientId="700716339246-aau8p35vfa84d5lgrf20g6nm196db0aa.apps.googleusercontent.com"
                             buttonText="Continuar com Google"
-                            onSuccess={googleLogin}
+                            onSuccess={(...args) => dispatch(googleLogin(...args))}
                             onFailure={console.error}
                         />
                     </Grid>
@@ -124,5 +126,3 @@ function LoginScreen ({ googleLogin }){
         </Grid>
     </Grid>
 }
-
-export default connect(null, { googleLogin })(LoginScreen);

@@ -7,6 +7,7 @@ import {
     Grid, Typography
 } from '@material-ui/core';
 import UserPixers from './userPixers';
+import CommunityPixers from './communityPixers';
 
 import SaveImage from './saveImage';
 import LogoutButton from './logout-button';
@@ -134,6 +135,11 @@ export default function LeftBar({ size, onSizeChange, onClean }) {
                         <List>
                             <UserPixers />
                             <LogoutButton />
+                        </List>
+
+                        {label('Comunidade')}
+                        <List>
+                            <CommunityPixers />
                         </List>
                     </Grid>
                 </Grid>

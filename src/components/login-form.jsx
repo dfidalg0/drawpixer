@@ -9,7 +9,7 @@ import { isEmail } from 'validator';
 
 // Redux
 import { login, register } from '../store/actions/auth';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 // Hooks
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
@@ -57,7 +57,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-function LoginForm({ login, register }){
+export default function LoginForm(){
     const classes = useStyles();
 
     // Modo ("login" ou "register")
@@ -79,15 +79,17 @@ function LoginForm({ login, register }){
         !isEmail(email)
     )), [mode, name, email, password, passConfirm]);
 
+    const dispatch = useDispatch();
+
     // Envio do formulário
     const handleButtonClick = useCallback(() => {
         if (mode === 'login'){
-            login(email, password);
+            dispatch(login(email, password));
         }
         else {
-            register(name, email, password, passConfirm);
+            dispatch(register(name, email, password, passConfirm));
         }
-    }, [mode, name, email, password, passConfirm, login, register]);
+    }, [mode, name, email, password, passConfirm, dispatch]);
 
     // Possibilidade de envio através do Enter
     useEffect(() => {
@@ -213,5 +215,3 @@ function LoginForm({ login, register }){
         </Grid>
     </Grid>
 }
-
-export default connect(null, { login, register })(LoginForm);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 
 import {
     Button, TextField, Dialog, DialogActions,
@@ -8,7 +8,9 @@ import {
 
 import { makeStyles } from '@material-ui/core/styles';
 
-import { saveDrawing } from '../store/actions/drawings';
+import { notify } from '../store/actions/ui';
+import { saveDrawing, updateDrawing } from '../store/actions/drawings';
+
 import DownloadImage from '../components/downloadImage';
 
 import EditorContext from './context/editor';
@@ -27,7 +29,7 @@ const useStyles = makeStyles({
     }
 });
 
-function SaveImage({ saveDrawing }) {
+export default function SaveImage() {
     const classes = useStyles();
 
     const { size } = useContext(EditorContext);
@@ -59,13 +61,26 @@ function SaveImage({ saveDrawing }) {
 
     const [loading, setLoading] = useState(false);
 
+    const dispatch = useDispatch();
+
     const handleSubmit = useCallback(async () => {
         setLoading(true);
         const grid = getGrid();
-        await saveDrawing(title, grid);
+        await dispatch(saveDrawing(title, grid));
         setLoading(false);
         setOpen(false);
-    }, [title, getGrid, saveDrawing]);
+    }, [title, getGrid, dispatch]);
+
+
+    const edit_id = useSelector(state => state.drawings.edit.id);
+
+    const handleUpdate = useCallback(async () => {
+        setLoading(true);
+        const grid = getGrid();
+        await dispatch(updateDrawing(edit_id, grid));
+        setLoading(false);
+    }, [getGrid, dispatch, edit_id]);
+
 
     const onChange = useCallback(e => setTitle(e.target.value), []);
 
@@ -78,11 +93,11 @@ function SaveImage({ saveDrawing }) {
 
     const loadFromLocalStorage = useCallback(() => {
         const item = window.localStorage.getItem("currimage");
-        if (!item) alert("Não há imagem salva!");
+        if (!item) dispatch(notify("Não há imagem salva!", 'warning'));
         else {
             setImg(JSON.parse(item));
         }
-    }, [setImg]);
+    }, [setImg, dispatch]);
 
     return (
         <>
@@ -106,7 +121,7 @@ function SaveImage({ saveDrawing }) {
                     <Button onClick={handleSubmit} color="primary"
                         disabled={title.length < 1}
                     >
-                        { loading? <CircularProgress size={18}/> : 'Salvar'  }
+                        {loading ? <CircularProgress size={18} /> : 'Salvar'}
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -117,6 +132,18 @@ function SaveImage({ saveDrawing }) {
                 className={classes.button}
             >
                 Salvar Pixer
+            </Button>
+
+            <Button
+                variant="contained" color="primary"
+                onClick={handleUpdate} size="large"
+                className={classes.button}
+                disabled={edit_id === null}
+                style={{
+                    marginTop: 15
+                }}
+            >
+                Atualizar Pixer
             </Button>
             <Button
                 variant="contained" color="primary"
@@ -142,6 +169,3 @@ function SaveImage({ saveDrawing }) {
         </>
     );
 }
-
-
-export default connect(null, { saveDrawing })(SaveImage);

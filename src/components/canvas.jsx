@@ -7,7 +7,7 @@ import React, { useRef, useEffect } from 'react'
 // grid.x e grid.y: dimensões
 // grid.colors: vetor com as cores de cada quadradinho
 
-function Canvas({ grid, style, className }) {
+function Canvas({ grid, style, className, size }) {
 
     const canvasRef = useRef(null);
 
@@ -18,19 +18,19 @@ function Canvas({ grid, style, className }) {
         // define tamanho do quadradinho para desenho não
         // ficar muito grande
         var square = grid.x > grid.y ? grid.x : grid.y;
-        var dimSquare = 330 / square;
+        var dimSquare = size / square;
 
         var iniX = 0;
         var iniY = 0;
 
         if(square === grid.x){
-            iniY = (330 - grid.y*dimSquare)/2
+            iniY = (size - grid.y*dimSquare)/2
         } else {
-            iniX = (330 - grid.x*dimSquare)/2
+            iniX = (size - grid.x*dimSquare)/2
         }
 
-        canvas.width = 330;
-        canvas.height = 330;
+        canvas.width = size;
+        canvas.height = size;
 
         // define cor da borda dos quadradinhos
         ctx.strokeStyle = '#999';
@@ -51,7 +51,7 @@ function Canvas({ grid, style, className }) {
                 ctx.strokeRect((x * dimSquare + 0.25) + iniX, (y * dimSquare + 0.25) + iniY, (dimSquare - 0.5), (dimSquare - 0.5));
             }
         }
-    }, [grid])
+    }, [grid, size])
 
     return <canvas ref={canvasRef} style={style} className={className} />
 }

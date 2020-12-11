@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, makeStyles } from '@material-ui/core';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { logout } from '../store/actions/auth';
 import { useGoogleLogout } from 'react-google-login';
 
@@ -13,11 +13,14 @@ const useStyles = makeStyles({
     }
 });
 
-function LogoutButton({ logout }) {
+export default function LogoutButton() {
     const classes = useStyles();
     const [pending, setPending] = useState(false);
+
+    const dispatch = useDispatch();
+
     const { signOut } = useGoogleLogout({
-        onLogoutSuccess: logout,
+        onLogoutSuccess: () => dispatch(logout()),
         clientId: "700716339246-aau8p35vfa84d5lgrf20g6nm196db0aa.apps.googleusercontent.com"
     });
 
@@ -35,8 +38,3 @@ function LogoutButton({ logout }) {
         Logout
     </Button>
 }
-
-export default connect(
-    null,
-    { logout }
-)(LogoutButton);

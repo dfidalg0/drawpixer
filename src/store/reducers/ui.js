@@ -1,14 +1,28 @@
-import { SET_LOAD } from '../actions/types';
+import {
+    SET_LOADING,
+    SET_NOTIFICATION,
+    CLEAR_NOTIFICATION
+} from '../actions/types';
 
 const baseState = {
-    loading: true
+    loading: true,
+    notifcation: null
 }
 
-export default function ui(state = baseState, action){
-    switch(action.type){
-    case SET_LOAD:
-        return { ...state, loading: action.loading };
-    default:
-        return state;
+export default function reducer(state = baseState, { type, payload }) {
+    switch (type) {
+        case SET_LOADING:
+            return { ...state, loading: payload.loading };
+        case SET_NOTIFICATION:
+            return {
+                ...state, notification: {
+                    msg: payload.msg,
+                    variant: payload.variant
+                }
+            };
+        case CLEAR_NOTIFICATION:
+            return { ...state, notification: null };
+        default:
+            return state;
     }
 }
