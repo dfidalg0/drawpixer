@@ -19,6 +19,7 @@
     "lodash.pick": "^4.4.0",
     "material-ui": "^0.20.2",
     "mongodb": "^3.6.3",
+    "notistack": "^1.0.2",
     "react": "^16.14.0",
     "react-color": "^2.19.3",
     "react-dom": "^16.14.0",

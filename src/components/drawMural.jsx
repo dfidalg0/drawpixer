@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     makeStyles, CircularProgress,
-    IconButton, GridListTile, 
+    IconButton, GridListTile,
     GridListTileBar
 } from '@material-ui/core';
 
@@ -13,7 +13,7 @@ import {
 import Canvas from './canvas'
 import { deleteUserDraw, updateMode } from '../store/actions/drawings';
 
-import { connect } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 import EditorContext from './context/editor';
 
@@ -33,20 +33,25 @@ const useStyles = makeStyles(() => ({
         marginLeft: 25,
         flex: 1,
     },
+    icon: {
+        color: 'rgba(255, 255, 255, 0.54)'
+    }
 }));
 
-function DrawMural({ draw, deleteUserDraw, updateMode }) {
+export default function DrawMural({ draw }) {
 
     const classes = useStyles();
     const { setImg } = useContext(EditorContext);
 
     const [loading, setLoading] = useState(false);
 
+    const dispatch = useDispatch();
+
     const deleteDraw = useCallback(async id => {
         setLoading(true);
-        await deleteUserDraw(id);
+        await dispatch(deleteUserDraw(id));
         setLoading(false);
-    }, [deleteUserDraw, setLoading]);
+    }, [dispatch, setLoading]);
 
 
     return (
@@ -60,7 +65,7 @@ function DrawMural({ draw, deleteUserDraw, updateMode }) {
                     <div>
                         <IconButton
                             className={classes.icon}
-                            onClick={() => { updateMode(draw._id); setImg(draw.grid) }}
+                            onClick={() => { dispatch(updateMode(draw._id)); setImg(draw.grid) }}
                             aria-label={`open ${draw.title} in editor`}
                         >
                             <OpenIcon />
@@ -76,5 +81,3 @@ function DrawMural({ draw, deleteUserDraw, updateMode }) {
         </GridListTile>
     )
 }
-
-export default connect(null, { deleteUserDraw, updateMode })(DrawMural);

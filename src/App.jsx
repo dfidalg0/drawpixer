@@ -1,11 +1,18 @@
+import {
+    Grow as GrowTransition
+} from '@material-ui/core';
+
 import React, { useEffect } from 'react';
 
 import LoadingScreen from './views/loading-screen';
 import LoginScren from './views/login-screen';
 import Main from './views/main';
 
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { checkLogin } from './store/actions/auth';
+import { clearNotify } from './store/actions/ui';
+
+import { useSnackbar } from 'notistack';
 
 import './App.css';
 
@@ -18,10 +25,36 @@ document.onmouseup = function () {
     window.mouseDown = false;
 }
 
-function App({ loading, isAuthenticated, checkLogin }) {
+export default function App() {
+    const dispatch = useDispatch();
+
     useEffect(() => {
-        checkLogin();
-    }, [checkLogin]);
+        dispatch(checkLogin());
+    }, [dispatch]);
+
+    const { enqueueSnackbar } = useSnackbar();
+
+    const notif = useSelector(state => state.ui.notification);
+
+    useEffect(() => {
+        if (notif) {
+            enqueueSnackbar(notif.msg, {
+                variant: notif.variant,
+                anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'center'
+                },
+                TransitionComponent: GrowTransition,
+                autoHideDuration: 2500
+            });
+            dispatch(clearNotify());
+        }
+    }, [notif, enqueueSnackbar, dispatch]);
+
+    const { loading, isAuthenticated } = useSelector(state => ({
+        isAuthenticated: Boolean(state.auth.token),
+        loading: state.ui.loading
+    }));
 
     return loading ?
         <LoadingScreen /> :
@@ -29,11 +62,3 @@ function App({ loading, isAuthenticated, checkLogin }) {
             <Main /> :
             <LoginScren />
 }
-
-export default connect(
-    state => ({
-        isAuthenticated: Boolean(state.auth.token),
-        loading: state.ui.loading
-    }),
-    { checkLogin }
-)(App);

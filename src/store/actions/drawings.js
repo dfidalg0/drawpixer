@@ -9,6 +9,7 @@ import {
 } from './types';
 
 import axios from 'axios';
+import { notify } from './ui';
 
 export const setDrawings = (drawings) => ({
     type: SET_DRAWINGS,
@@ -51,14 +52,18 @@ export const deleteUserDraw = (id) => async (dispatch, getState) => {
     var state = getState();
     const { token } = state.auth;
 
-
-    const res = await axios.delete('api/drawing/delete/' + id, {
-        headers: {
-            Authorization: token
-        }
-    });
-    dispatch(deleteDrawing(id));
-    alert(res.data.message);
+    try {
+        const res = await axios.delete('api/drawing/delete/' + id, {
+            headers: {
+                Authorization: token
+            }
+        });
+        dispatch(deleteDrawing(id));
+        dispatch(notify(res.data.message), 'success');
+    }
+    catch({ response: { data } }){
+        dispatch(notify(data.message, 'error'));
+    }
 }
 
 export const getCommunityDrawings = () => async (dispatch, getState) => {
@@ -76,7 +81,7 @@ export const getCommunityDrawings = () => async (dispatch, getState) => {
         dispatch(setCommunityDrawings(drawings));
     }
     catch ({ response: { data } }) {
-        alert('Erro: ' + data.message);
+        dispatch(notify(data.message, 'error'));
     }
 }
 
@@ -84,7 +89,7 @@ export const saveDrawing = (title, grid) => async (dispatch, getState) => {
     var state = getState();
     const { user, token } = state.auth;
     try {
-        const { data: { _id, created_at } } = await axios.post('/api/drawings/create', {
+        const { data: { message, _id, created_at } } = await axios.post('/api/drawings/create', {
             title: title,
             grid: grid,
         }, {
@@ -99,9 +104,10 @@ export const saveDrawing = (title, grid) => async (dispatch, getState) => {
                 name: user.name
             }
         }));
+        dispatch(notify(message, 'success'));
     }
     catch ({ response: { data } }) {
-        alert(data.message);
+        dispatch(notify(data.message, 'error'));
     }
 };
 
@@ -119,10 +125,10 @@ export const updateDrawing = (id, grid) => async (dispatch, getState) => {
         });
 
         dispatch(updateDraw(id, grid));
-        alert(data.message);
+        dispatch(notify(data.message, 'success'));
     }
     catch ({ response: { data } }) {
-        alert(data.message);
+        dispatch(notify(data.message, 'error'));
     }
 };
 
@@ -141,6 +147,6 @@ export const fetchUserDrawings = () => async (dispatch, getState) => {
         dispatch(setDrawings(drawings));
     }
     catch ({ response: { data } }) {
-        alert('Erro: ' + data.message);
+        dispatch(notify(data.message, 'error'));
     }
 };

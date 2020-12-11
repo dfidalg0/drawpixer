@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 
 import {
     Button, TextField, Dialog, DialogActions,
@@ -8,7 +8,9 @@ import {
 
 import { makeStyles } from '@material-ui/core/styles';
 
+import { notify } from '../store/actions/ui';
 import { saveDrawing, updateDrawing } from '../store/actions/drawings';
+
 import DownloadImage from '../components/downloadImage';
 
 import EditorContext from './context/editor';
@@ -27,7 +29,7 @@ const useStyles = makeStyles({
     }
 });
 
-function SaveImage({ saveDrawing, updateDrawing, edit_id }) {
+export default function SaveImage() {
     const classes = useStyles();
 
     const { size } = useContext(EditorContext);
@@ -59,21 +61,25 @@ function SaveImage({ saveDrawing, updateDrawing, edit_id }) {
 
     const [loading, setLoading] = useState(false);
 
+    const dispatch = useDispatch();
+
     const handleSubmit = useCallback(async () => {
         setLoading(true);
         const grid = getGrid();
-        await saveDrawing(title, grid);
+        await dispatch(saveDrawing(title, grid));
         setLoading(false);
         setOpen(false);
-    }, [title, getGrid, saveDrawing]);
+    }, [title, getGrid, dispatch]);
 
+
+    const edit_id = useSelector(state => state.drawings.edit.id);
 
     const handleUpdate = useCallback(async () => {
         setLoading(true);
         const grid = getGrid();
-        await updateDrawing(edit_id, grid);
+        await dispatch(updateDrawing(edit_id, grid));
         setLoading(false);
-    }, [getGrid, updateDrawing, edit_id]);
+    }, [getGrid, dispatch, edit_id]);
 
 
     const onChange = useCallback(e => setTitle(e.target.value), []);
@@ -87,11 +93,11 @@ function SaveImage({ saveDrawing, updateDrawing, edit_id }) {
 
     const loadFromLocalStorage = useCallback(() => {
         const item = window.localStorage.getItem("currimage");
-        if (!item) alert("Não há imagem salva!");
+        if (!item) dispatch(notify("Não há imagem salva!", 'warning'));
         else {
             setImg(JSON.parse(item));
         }
-    }, [setImg]);
+    }, [setImg, dispatch]);
 
     return (
         <>
@@ -163,8 +169,3 @@ function SaveImage({ saveDrawing, updateDrawing, edit_id }) {
         </>
     );
 }
-
-
-export default connect(state => ({
-    edit_id: state.drawings.edit.id,
-}), { saveDrawing, updateDrawing })(SaveImage);

@@ -13,7 +13,7 @@ import {
 
 import { fetchUserDrawings } from '../store/actions/drawings';
 
-import { connect } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 
 import DrawMural from './drawMural';
 
@@ -66,10 +66,14 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function UserPixers({ fetchUserDrawings, drawings }) {
+export default function UserPixers() {
     const classes = useStyles();
     const [opened, setOpened] = useState(false);
     const [search, setSearch] = useState('');
+
+    const drawings = useSelector(state => state.drawings.list);
+
+    const dispatch = useDispatch();
 
     const toggleDrawer = useCallback(open => e => {
         if (e.type === 'keydown' && ['Tab', 'Shift'].includes(e.key)) {
@@ -77,10 +81,10 @@ function UserPixers({ fetchUserDrawings, drawings }) {
         }
         setOpened(open);
         if (open && !drawings) {
-            fetchUserDrawings();
+            dispatch(fetchUserDrawings());
         }
 
-    }, [drawings, fetchUserDrawings]);
+    }, [drawings, dispatch]);
 
 
     const drawingsList = useCallback(() => drawings ? (
@@ -142,7 +146,3 @@ function UserPixers({ fetchUserDrawings, drawings }) {
         </div>
     );
 }
-
-export default connect(state => ({
-    drawings: state.drawings.list
-}), { fetchUserDrawings })(UserPixers);

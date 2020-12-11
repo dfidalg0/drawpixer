@@ -8,7 +8,7 @@ import {
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 
-import { setLoading } from './ui';
+import { setLoading, notify } from './ui';
 import { clearDrawings } from './drawings';
 
 // Criadores de ações básicas
@@ -89,7 +89,7 @@ export const googleLogin = googleUser => async dispatch => {
         dispatch(loadUser(token));
     }
     catch({ response: { data } }){
-        alert(data.message);
+        dispatch(notify(data.message, 'error'));
     }
     finally {
         // Aplicação colocada fora de estado de carregamento
@@ -111,7 +111,7 @@ export const login = (email, password) => async dispatch => {
         dispatch(loadUser(token));
     }
     catch({ response: { data } }){
-        alert(data.message);
+        dispatch(notify(data.message, 'error'));
     }
     finally {
         // Aplicação colocada fora de estado de carregamento
@@ -133,7 +133,7 @@ export const register = (name, email, password, passConfirm) => async dispatch =
         dispatch(loadUser(token));
     }
     catch({ response: { data } }){
-        alert(data.message);
+        dispatch(notify(data.message, 'error'));
     }
     finally {
         // Aplicação colocada fora de estado de carregamento
@@ -188,7 +188,7 @@ export const logout = () => async (dispatch, getState) => {
         dispatch(clearDrawings());
     }
     catch({ response: { data } }) {
-        alert(data.message);
+        dispatch(notify(data.message, 'error'));
     }
     finally {
         // Aplicação retirada do estado de carregamento

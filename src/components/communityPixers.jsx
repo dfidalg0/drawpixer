@@ -15,7 +15,7 @@ import {
 import Canvas from './canvas'
 import { getCommunityDrawings, updateMode } from '../store/actions/drawings';
 
-import { connect } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 
 import EditorContext from './context/editor';
 
@@ -67,10 +67,16 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function CommunityPixers({ getCommunityDrawings, drawings, all, updateMode }) {
+export default function CommunityPixers() {
     const classes = useStyles();
     const [opened, setOpened] = useState(false);
     const [search, setSearch] = useState('');
+
+    const drawings = useSelector(state => state.community.list);
+
+    const dispatch = useDispatch();
+
+    const [loading, setLoading] = useState(false);
 
     const toggleDrawer = useCallback(open => e => {
         if (e.type === 'keydown' && ['Tab', 'Shift'].includes(e.key)) {
@@ -78,10 +84,10 @@ function CommunityPixers({ getCommunityDrawings, drawings, all, updateMode }) {
         }
         setOpened(open);
         if (open && !drawings) {
-            getCommunityDrawings();
+            dispatch(getCommunityDrawings())
         }
 
-    }, [drawings, getCommunityDrawings]);
+    }, [drawings, dispatch]);
 
     const { setImg } = useContext(EditorContext);
 
@@ -100,7 +106,7 @@ function CommunityPixers({ getCommunityDrawings, drawings, all, updateMode }) {
                 actionIcon={
                     <IconButton
                         className={classes.icon}
-                        onClick={() => { updateMode(null); setImg(draw.grid)}}
+                        onClick={() => { dispatch(updateMode(null)); setImg(draw.grid)}}
                         aria-label={`open ${draw.title} in editor`}
                     >
                         <OpenIcon />
@@ -112,8 +118,10 @@ function CommunityPixers({ getCommunityDrawings, drawings, all, updateMode }) {
         <Grid container justify="center" alignContent="center" alignItems="center" style={{ width: 600 }}>
             <CircularProgress />
         </Grid>,
-        [classes, drawings, search, setImg, updateMode]
+        [classes, drawings, search, setImg, dispatch]
     );
+
+    const all = useSelector(state => state.community.all);
 
     return (
         <div>
@@ -154,7 +162,21 @@ function CommunityPixers({ getCommunityDrawings, drawings, all, updateMode }) {
                         }}>
                             {drawingsList()}
                         </GridList>
-                        {all ? null : drawings? <Button onClick={getCommunityDrawings} style={{ height: 60 }}>Carregar Mais</Button> : null }
+                        {all ? null :
+                            drawings?
+                                <Button
+                                    onClick={async () => {
+                                        setLoading(true);
+                                        await dispatch(getCommunityDrawings());
+                                        setLoading(false);
+                                    }}
+                                    style={{ height: 60 }}
+                                    disabled={loading}
+                                >
+                                    Carregar Mais
+                                </Button> :
+                                null
+                        }
 
                     </GridList>
                 </div>
@@ -162,8 +184,3 @@ function CommunityPixers({ getCommunityDrawings, drawings, all, updateMode }) {
         </div>
     );
 }
-
-export default connect(state => ({
-    drawings: state.community.list,
-    all: state.community.all,
-}), { getCommunityDrawings, updateMode })(CommunityPixers);
