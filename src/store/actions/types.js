@@ -6,6 +6,8 @@ export const DELETE_DRAWING = 'DELETE_DRAWING';
 export const UPDATE_DRAWING = 'UPDATE_DRAWING';
 export const UPDATE_MODE = 'UPDATE_MODE';
 export const SET_COMMUNITY_DRAWINGS = 'SET_COMMUNITY_DRAWINGS';
+export const UPDATE_LIKE = 'UPDATE_LIKE';
+export const DELETE_LIKE = 'DELETE_LIKE';
 
 // Ações da interface da aplicação
 export const SET_LOADING = 'SET_LOADING';
