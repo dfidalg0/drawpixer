@@ -4,7 +4,8 @@ import {
     Grid, CircularProgress,
     Drawer, Button, Paper, InputBase,
     Divider, IconButton, ListSubheader,
-    GridListTile, GridList, GridListTileBar
+    GridListTile, GridList, GridListTileBar,
+    Tooltip
 } from '@material-ui/core';
 
 import {
@@ -13,7 +14,7 @@ import {
 } from '@material-ui/icons';
 
 import Canvas from './canvas'
-import { getCommunityDrawings, updateMode } from '../store/actions/drawings';
+import { getCommunityDrawings, updateMode, likeDrawing, removeLike } from '../store/actions/drawings';
 
 import { useSelector, useDispatch } from 'react-redux'
 
@@ -21,17 +22,19 @@ import EditorContext from './context/editor';
 
 import { useState, useCallback, useContext } from 'react';
 
+import FavoriteIcon from '@material-ui/icons/Favorite';
+
 const useStyles = makeStyles((theme) => ({
     filterBar: {
         marginBottom: 10,
         marginTop: 10
     },
     list: {
-        width: 500,
+        width: 600,
         maxWidth: '80vw'
     },
     gridList: {
-        width: 500,
+        width: 600,
         maxWidth: '80vw',
         height: '100vh'
     },
@@ -58,6 +61,9 @@ const useStyles = makeStyles((theme) => ({
     icon: {
         color: 'rgba(255, 255, 255, 0.54)',
     },
+    iconRed: {
+        color: 'red',
+    },
     input: {
         marginLeft: 25,
         flex: 1,
@@ -66,6 +72,63 @@ const useStyles = makeStyles((theme) => ({
         padding: 10,
     }
 }));
+
+function Draw({ draw, index }) {
+    const classes = useStyles();
+
+    const [loadingLike, setLoadingLike] = useState(false);
+    const [loadingDislike, setLoadingDislike] = useState(false);
+
+    const dispatch = useDispatch();
+    const { setImg } = useContext(EditorContext);
+
+    const likeDraw = useCallback(async () => {
+        setLoadingLike(true);
+        await dispatch(likeDrawing(draw._id))
+        setLoadingLike(false);
+    }, [dispatch, setLoadingLike, draw]);
+
+    const dislike = useCallback(async () => {
+        setLoadingDislike(true);
+        await dispatch(removeLike(draw._id));
+        setLoadingDislike(false);
+    }, [dispatch, setLoadingDislike, draw]);
+
+    return (
+        <GridListTile className={classes.gridTile} key={index} style={{ minHeight: 250, width: '50%' }}>
+            <Canvas grid={draw.grid} size={250} />
+            <GridListTileBar
+                title={draw.title}
+                subtitle={<span>Autor: {draw.user ? draw.user.name : 'Desconhecido'}</span>}
+                actionIcon={
+                    <Grid container>
+                        <Grid item xs={6}>
+                            <IconButton
+                                className={classes.icon}
+                                onClick={() => { dispatch(updateMode(null)); setImg(draw.grid) }}
+                                aria-label={`open ${draw.title} in editor`}
+                            >
+                                <OpenIcon />
+                            </IconButton>
+                        </Grid>
+                        <Grid item xs={6}>
+                            {!draw.likes ? <IconButton className={classes.icon}
+                                onClick={() => likeDraw()}>
+                                {loadingLike ? <CircularProgress size={18} /> : <Tooltip title={draw.num_likes} aria-label="add"><FavoriteIcon /></Tooltip>}
+                            </IconButton> :
+                                <IconButton className={classes.iconRed}
+                                onClick={() => dislike()}>
+                                    {loadingDislike ? <CircularProgress size={18} /> : <Tooltip title={draw.num_likes} aria-label="add"><FavoriteIcon /></Tooltip>}
+                                </IconButton>
+                            }
+
+                        </Grid>
+                    </Grid>
+                }
+            />
+        </GridListTile>
+    )
+}
 
 export default function CommunityPixers() {
     const classes = useStyles();
@@ -89,8 +152,6 @@ export default function CommunityPixers() {
 
     }, [drawings, dispatch]);
 
-    const { setImg } = useContext(EditorContext);
-
     const drawingsList = useCallback(() => drawings ? (
         search ?
             drawings.filter(
@@ -98,27 +159,12 @@ export default function CommunityPixers() {
             ) :
             drawings
     ).map((draw, index) =>
-        <GridListTile className={classes.gridTile} key={index} style={{ minHeight: 250 }}>
-            <Canvas grid={draw.grid} size={200} />
-            <GridListTileBar
-                title={draw.title}
-                subtitle={<span>Autor: {draw.user ? draw.user.name : 'Desconhecido'}</span>}
-                actionIcon={
-                    <IconButton
-                        className={classes.icon}
-                        onClick={() => { dispatch(updateMode(null)); setImg(draw.grid)}}
-                        aria-label={`open ${draw.title} in editor`}
-                    >
-                        <OpenIcon />
-                    </IconButton>
-                }
-            />
-        </GridListTile>
+        <Draw draw={draw} index={index} key={index}/>
     ) :
         <Grid container justify="center" alignContent="center" alignItems="center" style={{ width: 600 }}>
             <CircularProgress />
         </Grid>,
-        [classes, drawings, search, setImg, dispatch]
+        [drawings, search]
     );
 
     const all = useSelector(state => state.community.all);
@@ -163,7 +209,7 @@ export default function CommunityPixers() {
                             {drawingsList()}
                         </GridList>
                         {all ? null :
-                            drawings?
+                            drawings ?
                                 <Button
                                     onClick={async () => {
                                         setLoading(true);

@@ -6,6 +6,8 @@ import {
     UPDATE_DRAWING,
     UPDATE_MODE,
     SET_COMMUNITY_DRAWINGS,
+    UPDATE_LIKE,
+    DELETE_LIKE
 } from './types';
 
 import axios from 'axios';
@@ -36,6 +38,16 @@ export const updateDraw = (id, grid) => ({
     grid
 })
 
+export const updateLike = (id) => ({
+    type: UPDATE_LIKE,
+    id,
+})
+
+export const deleteLike = (id) => ({
+    type: DELETE_LIKE,
+    id
+})
+
 export const updateMode = (id) => async (dispatch) => {
     dispatch({
         type: UPDATE_MODE,
@@ -61,7 +73,44 @@ export const deleteUserDraw = (id) => async (dispatch, getState) => {
         dispatch(deleteDrawing(id));
         dispatch(notify(res.data.message), 'success');
     }
-    catch({ response: { data } }){
+    catch ({ response: { data } }) {
+        dispatch(notify(data.message, 'error'));
+    }
+}
+
+export const likeDrawing = (id) => async (dispatch, getState) => {
+    var state = getState();
+    const { token } = state.auth;
+
+    try {
+        const res = await axios.post('/api/drawings/update/likes', { id }, {
+            headers: {
+                Authorization: token
+            }
+        })
+
+        dispatch(updateLike(id));
+        dispatch(notify(res.data.message), 'success');
+    } catch ({ response: { data } }) {
+        dispatch(notify(data.message, 'error'));
+    }
+}
+
+
+export const removeLike = (id) => async (dispatch, getState) => {
+    var state = getState();
+    const { token } = state.auth;
+
+    try {
+        const res = await axios.post('/api/drawings/update/likes/remove', { id }, {
+            headers: {
+                Authorization: token
+            }
+        })
+
+        dispatch(deleteLike(id));
+        dispatch(notify(res.data.message), 'success');
+    } catch ({ response: { data } }) {
         dispatch(notify(data.message, 'error'));
     }
 }
@@ -77,7 +126,7 @@ export const getCommunityDrawings = () => async (dispatch, getState) => {
             }
         });
 
-        drawings.sort((a, b) => a.created_at >= b.created_at ? -1 : 1);
+        drawings.sort((a, b) => a.num_likes >= b.num_likes ? -1 : 1);
         dispatch(setCommunityDrawings(drawings));
     }
     catch ({ response: { data } }) {

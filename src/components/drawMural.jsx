@@ -38,6 +38,8 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
+// função para os desenhos do usuário
+// cada DrawMural representa um desenho
 export default function DrawMural({ draw }) {
 
     const classes = useStyles();
@@ -73,7 +75,6 @@ export default function DrawMural({ draw }) {
 
                         <IconButton className={classes.icon} onClick={() => deleteDraw(draw._id)}>
                             {loading ? <CircularProgress size={18} /> : <DeleteIcon />}
-
                         </IconButton>
                     </div>
                 }
