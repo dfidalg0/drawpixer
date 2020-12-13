@@ -1,4 +1,14 @@
 {
-    "routes": [{ "src": "/api/(.*)", "dest": "/api" }],
+    "routes": [
+        { "src": "/api/(.*)", "dest": "/api" },
+        {
+            "src": "/",
+            "headers": {
+                "X-Frame-Options": "DENY",
+                "X-Content-Type-Options": "nosniff",
+                "Referrer-Policy": "same-origin"
+            }
+        }
+    ],
     "regions": ["gru1"]
 }
