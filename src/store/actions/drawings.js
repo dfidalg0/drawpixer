@@ -153,6 +153,7 @@ export const saveDrawing = (title, grid) => async (dispatch, getState) => {
                 name: user.name
             }
         }));
+        dispatch(updateMode(_id));
         dispatch(notify(message, 'success'));
     }
     catch ({ response: { data } }) {
