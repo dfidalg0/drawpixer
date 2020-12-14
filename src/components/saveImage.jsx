@@ -75,10 +75,9 @@ export default function SaveImage() {
     const edit_id = useSelector(state => state.drawings.edit.id);
 
     const handleUpdate = useCallback(async () => {
-        setLoading(true);
+        dispatch(notify('Atualizando Pixer'));
         const grid = getGrid();
         await dispatch(updateDrawing(edit_id, grid));
-        setLoading(false);
     }, [getGrid, dispatch, edit_id]);
 
 

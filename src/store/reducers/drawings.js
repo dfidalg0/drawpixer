@@ -26,7 +26,8 @@ export default function reducer(state = baseState, action) {
                 state;
         case DELETE_DRAWING:
             const newDrawings = state.list.filter(draw => draw._id !== action.id);
-            return { ...state, list: newDrawings, edit: {id: null}};
+            const edit = action.id === state.edit.id ? { id: null } : state.edit;
+            return { ...state, list: newDrawings, edit };
         case UPDATE_MODE:
             return {...state, edit: {id: action.id}}
         case UPDATE_DRAWING:
